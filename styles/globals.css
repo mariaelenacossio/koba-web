@@ -1,11 +1,266 @@
 @import "tailwindcss";
+@import "./motion.css";
 
 /*
-  Koba design tokens arrive in step 2 (see DESIGN.md sections 2 to 6).
-  Until then the placeholder page uses the dark canvas and ivory ink directly.
+  Koba design tokens. Source of truth: DESIGN.md sections 2 to 6.
+  Dark is the default theme on :root. Light is applied with data-theme="light"
+  on <html>, set only when the visitor picks it with the theme toggle.
 */
 
-body {
-  background: #0e241b;
-  color: #f3ebdd;
+@theme {
+  /* Breakpoints: narrow (< 640), medium (640 to 1023), wide (1024 and up). */
+  --breakpoint-*: initial;
+  --breakpoint-md: 40rem;
+  --breakpoint-lg: 64rem;
+
+  /* Color: dark values. Light overrides live in [data-theme="light"] below. */
+  --color-*: initial;
+  --color-canvas: #0e241b;
+  --color-surface: #14342a;
+  --color-surface-2: #1d4535;
+  --color-ink: #f3ebdd;
+  --color-ink-muted: #b9b09c;
+  --color-gold: #c9a24a;
+  --color-gold-ink: #c9a24a;
+  --color-gold-soft: #e3c27a;
+  --color-gold-hover: #e3c27a;
+  --color-amharic: #e3c27a;
+  --color-brass: #a9743a;
+  --color-line: rgb(243 235 221 / 0.12);
+  --color-line-strong: rgb(243 235 221 / 0.24);
+  --color-error: #e08a72;
+  --color-on-gold: #0e241b;
+  --color-transparent: transparent;
+
+  /* Fixed brand colors that never change with the theme: the film areas
+     (hero, film frame, lightbox) and the tibeb band. */
+  --color-film-canvas: #0e241b;
+  --color-film-ink: #f3ebdd;
+  --color-film-ink-muted: #e6dfd0;
+  --color-film-gold: #c9a24a;
+  --color-film-gold-soft: #e3c27a;
+  --color-tibeb-ground: #14342a;
+  --color-tibeb-diamond: #1d4535;
+  --color-tibeb-gold: #c9a24a;
+  --color-tibeb-gold-soft: #e3c27a;
+  --color-tibeb-brass: #a9743a;
+
+  /* Type sizes and line heights (DESIGN.md section 3). */
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.4;
+  --text-secondary: 0.875rem;
+  --text-secondary--line-height: 1.5;
+  --text-label: 0.9375rem;
+  --text-label--line-height: 1.2;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-prose: 1.0625rem;
+  --text-prose--line-height: 1.6;
+  --text-price: 1.25rem;
+  --text-price--line-height: 1.2;
+  --text-am-title: 1.0625rem;
+  --text-am-title--line-height: 1.4;
+  --text-lead: 1.25rem;
+  --text-lead--line-height: 1.5;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.25;
+  --text-h2: clamp(2rem, 4.5vw, 3.25rem);
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.015em;
+  --text-display: clamp(2.75rem, 7vw, 5.5rem);
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.02em;
+
+  --font-weight-*: initial;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Radius: 2px controls, 4px images and cards. */
+  --radius-*: initial;
+  --radius-ctl: 2px;
+  --radius-card: 4px;
+
+  /* Layout */
+  --container-page: 75rem;
+  --container-prose: 70ch;
+
+  /* Elevation (DESIGN.md section 6) */
+  --shadow-*: initial;
+  --shadow-l2: 0 16px 40px rgb(0 0 0 / 0.35);
+  --inset-shadow-*: initial;
+  --inset-shadow-edge: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+
+@theme inline {
+  --font-*: initial;
+  --font-display: var(--font-bodoni), "Didot", "Bodoni 72", "Times New Roman", serif;
+  --font-body: var(--font-jost), "Futura", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  --font-amharic-serif: var(--font-noto-serif-ethiopic), "Abyssinica SIL", "Nyala", serif;
+  --font-amharic-sans: var(--font-noto-sans-ethiopic), "Nyala", "Kefa", sans-serif;
+}
+
+/* Light theme: the ivory of the hostess's habesha kemis. */
+[data-theme="light"] {
+  color-scheme: light;
+  --color-canvas: #f6f0e4;
+  --color-surface: #eee5d3;
+  --color-surface-2: #e6dac3;
+  --color-ink: #12291f;
+  --color-ink-muted: #56604f;
+  --color-gold: #8c6a1e;
+  --color-gold-ink: #7a5a14;
+  --color-gold-soft: #a88433;
+  --color-gold-hover: #5f460f;
+  --color-amharic: #7a5a14;
+  --color-brass: #8a5a26;
+  --color-line: rgb(18 41 31 / 0.12);
+  --color-line-strong: rgb(18 41 31 / 0.24);
+  --color-error: #a3432b;
+  --color-on-gold: #f6f0e4;
+  --shadow-l2: 0 16px 40px rgb(18 41 31 / 0.07);
+  --inset-shadow-edge: inset 0 0 0 transparent;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --nav-h: 4rem;
+    scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + 1rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-weight: 400;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  [lang="am"] {
+    font-family: var(--font-amharic-sans);
+    letter-spacing: 0;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-on-gold);
+  }
+}
+
+@layer components {
+  /* Buttons (DESIGN.md section 4). Sentence case, verb first, no arrows. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-ctl);
+    font-family: var(--font-body);
+    font-size: var(--text-label);
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-150) var(--ease-out),
+      border-color var(--motion-150) var(--ease-out),
+      color var(--motion-150) var(--ease-out),
+      transform var(--motion-100) var(--ease-out);
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn-primary {
+    background: var(--color-gold-ink);
+    color: var(--color-on-gold);
+  }
+  .btn-secondary {
+    background: transparent;
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+  @media (hover: hover) {
+    .btn-primary:hover {
+      background: var(--color-gold-hover);
+    }
+    .btn-secondary:hover {
+      background: var(--color-surface-2);
+    }
+  }
+
+  /* Over the film (hero, film frame): always the dark palette. */
+  .on-film .btn-primary {
+    background: var(--color-film-gold);
+    color: var(--color-film-canvas);
+  }
+  .on-film .btn-secondary {
+    border-color: var(--color-film-gold);
+    color: var(--color-film-ink);
+  }
+  @media (hover: hover) {
+    .on-film .btn-primary:hover {
+      background: var(--color-film-gold-soft);
+    }
+    .on-film .btn-secondary:hover {
+      background: rgb(29 69 53 / 0.6);
+    }
+  }
+
+  /* 44px square icon control */
+  .icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-ctl);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color var(--motion-150) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .icon-btn:hover {
+      border-color: currentColor;
+    }
+  }
+
+  .skip-link {
+    position: fixed;
+    left: 1rem;
+    top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+    z-index: 60;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-ctl);
+    background: var(--color-gold-ink);
+    color: var(--color-on-gold);
+    font-weight: 500;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus-visible {
+    transform: none;
+  }
 }
