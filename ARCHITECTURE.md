@@ -37,14 +37,14 @@ Tags
 | Language | TypeScript, strict mode | Catches errors in menu data and booking forms early |
 | Styling | Tailwind CSS v4 with tokens in `@theme` | Design tokens live in one place; matches the color, type, and spacing system |
 | Motion | CSS transitions and scroll-driven animations first; Motion (Framer Motion) only for the hero entrance and dialog/menu presence | Keeps the bundle light and motion on the compositor |
-| Fonts | `next/font/google`: Bodoni Moda, Jost, Noto Serif Ethiopic, Noto Sans Ethiopic | Self-hosted, no layout shift |
+| Fonts | `next/font/local` with the woff2 files bundled in `app/fonts` (OFL): Bodoni Moda, Jost, Noto Serif Ethiopic, Noto Sans Ethiopic | Self-hosted, no layout shift, builds never depend on Google |
 | Images | `next/image` with AVIF and WebP | Correct sizes, lazy loading, no layout shift |
 | Forms | Server Actions + Zod validation (shared schema client and server) | One source of truth for validation rules |
 | Database | Supabase (Postgres) | Stores reservations and Gursha seat bookings |
 | Email | Resend + React Email templates | Guest confirmations and restaurant notifications |
 | Spam protection | Cloudflare Turnstile + honeypot field + rate limit per IP | Keeps fake bookings out without annoying guests |
 | Hosting | Vercel | Preview deploys per pull request, edge caching |
-| Video hosting | Vercel Blob for the full film; hero loop served from `/public` if under 3MB | Keeps the repo small |
+| Video hosting | Vercel Blob (public store) for the full film; hero loop served from `/public` if under 3MB | Keeps the repo small; public blobs stream straight from the CDN |
 | Analytics | Vercel Analytics + Speed Insights | Privacy-friendly, no cookie banner needed |
 | Package manager | pnpm | Fast, strict installs |
 | Runtime | Node.js LTS | Stable |
@@ -86,6 +86,8 @@ koba-web/
     menu.ts               typed menu data
     bar.ts                typed drinks data
     gallery.ts            stills, categories, alt text
+    stills.generated.json written by pnpm media:stills (frame times, sizes)
+    media.generated.json  written by pnpm media:film:upload (film URL)
     site.ts               address, hours, phone, email, socials (placeholders until confirmed)
   emails/
     ReservationConfirmation.tsx
@@ -100,8 +102,11 @@ koba-web/
     globals.css           Tailwind import, @theme tokens, base styles
     motion.css            duration and easing tokens, reduced-motion overrides
   public/
-    media/                hero loop, posters, optimized stills
+    media/                hero loop (webm, mp4) and hero poster
+      stills/             film stills, 1920x1080 JPG sources
     subtitles/            koba-am.vtt, koba-en.vtt
+  scripts/
+    media/                hero, stills, film and upload scripts (ffmpeg-static)
     brand/                logo.svg, favicon, og-image.jpg
   supabase/
     migrations/           SQL migrations, committed to Git
@@ -189,17 +194,28 @@ Where Motion (Framer Motion) is allowed
 ## 6. Media pipeline
 
 Source
-- Master film from Google Drive. Never commit masters.
+- The master film stays out of Git. Its local path goes in `KOBA_MASTER_FILM` in `.env.local`.
+- ffmpeg comes from the `ffmpeg-static` dev dependency, so nobody needs a system install.
 
-Scripts (add to `package.json`, run with ffmpeg)
-- `pnpm media:hero` cuts the first 8 seconds into `hero.webm` and `hero.mp4`, muted, under 3MB.
-- `pnpm media:stills` extracts the gallery stills at the timestamps listed in `CLAUDE.md`, exports AVIF, WebP, and JPG at 1x and 2x.
-- `pnpm media:film` compresses the full film for Vercel Blob upload.
+Scripts (`scripts/media`)
+- `pnpm media:hero` cuts the first 8 seconds into `public/media/hero.webm` (VP9) and `hero.mp4` (H.264), muted, 1600px wide, and writes `hero-poster.jpg` from the first frame. It fails if either video is over 3MB.
+- `pnpm media:stills` extracts the 14 gallery stills. For each timestamp it scores every frame within half a second with ffmpeg's `blurdetect` and keeps the sharpest. It writes 1920x1080 high-quality JPGs to `public/media/stills`, records the chosen frames in `content/stills.generated.json`, and writes a labelled contact sheet to `.media-out` for review. Timestamps follow `CLAUDE.md` section 9, with three swaps for variety: dining 0:28, gursha 0:34, tej 0:52.
+- `pnpm media:film` compresses the full film to 1080p H.264 with AAC audio in `.media-out/koba-film.mp4` (gitignored).
+- `pnpm media:film:upload` uploads that file to Vercel Blob and writes its URL to `content/media.generated.json`.
+- `pnpm media` runs hero, stills and film in order.
 
-Rules
-- Every image has explicit width, height, and real alt text.
+Images
+- The scripts export one high-quality JPG per still. `next/image` serves AVIF and WebP at 1x and 2x from it, so there is one source file per image instead of six.
+- Every image has explicit width, height, and real alt text. Alt text lives in `content/gallery.ts`, and the build fails if a still has none.
 - Hero poster loads with priority. Everything below the fold is lazy.
-- Subtitles are `.vtt` files in `public/subtitles`, loaded with `<track>`.
+- The film poster is the dining-room still (`stills/dining-19.jpg`), so the film and the hero don't open on the same frame.
+
+Blob
+- The film lives in a public Blob store. Video players need a URL they can request directly with range requests, and a private store only serves blobs through an authenticated function.
+- Auth uses Vercel OIDC, not a static token. `vercel env pull` provides `BLOB_STORE_ID` and a short-lived `VERCEL_OIDC_TOKEN`; `@vercel/blob` refreshes the token in development from your `vercel login` session and `.vercel/project.json`.
+
+Subtitles
+- `.vtt` files in `public/subtitles`, loaded with `<track>`.
 
 ---
 
@@ -271,7 +287,8 @@ BOOKINGS_NOTIFY_EMAIL=
 BOOKINGS_FROM_EMAIL=
 TURNSTILE_SITE_KEY=
 TURNSTILE_SECRET_KEY=
-BLOB_READ_WRITE_TOKEN=
+BLOB_STORE_ID=
+VERCEL_OIDC_TOKEN=        (development only, from vercel env pull; refreshed automatically)
 ```
 
 ---
