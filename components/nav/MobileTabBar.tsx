@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { tabBarLinks } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { useActiveSection } from "./useActiveSection";
+import { useHeroInView } from "./useHeroInView";
 
 const sectionIds = tabBarLinks.flatMap((l) => (l.sectionId ? [l.sectionId] : []));
 
@@ -12,6 +13,10 @@ const sectionIds = tabBarLinks.flatMap((l) => (l.sectionId ? [l.sectionId] : [])
 export function MobileTabBar() {
   const pathname = usePathname();
   const active = useActiveSection(sectionIds);
+  // One primary action per screen: while the hero shows its own Reserve
+  // button, the tab bar's Reserve fades out. Its slot keeps its width, so the
+  // other tabs don't move.
+  const heroInView = useHeroInView();
 
   return (
     <nav
@@ -29,8 +34,9 @@ export function MobileTabBar() {
             className={cn(
               "flex min-h-13 flex-1 flex-col items-center justify-center gap-0.5 rounded-ctl text-secondary leading-tight font-medium",
               primary
-                ? "my-1 flex-[1.3] bg-gold-ink text-on-gold"
+                ? "my-1 flex-[1.3] bg-button text-on-gold transition-[opacity,visibility] duration-200"
                 : "text-ink-muted aria-[current]:text-gold-ink",
+              primary && heroInView && "invisible opacity-0",
             )}
           >
             {link.label}

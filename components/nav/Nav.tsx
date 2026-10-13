@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { sectionNav } from "@/content/site";
 import { cn } from "@/lib/cn";
 import { BookMenu } from "./BookMenu";
 import { ThemeToggle } from "./ThemeToggle";
 import { useActiveSection } from "./useActiveSection";
+import { useHeroInView } from "./useHeroInView";
 
 const sectionIds = sectionNav.map((s) => s.id);
 
@@ -17,22 +16,8 @@ const sectionIds = sectionNav.map((s) => s.id);
  * canvas with a 1px line once the hero scrolls away. No blur.
  */
 export function Nav() {
-  const pathname = usePathname();
-  const [heroInView, setHeroInView] = useState(true);
+  const overHero = useHeroInView();
   const active = useActiveSection(sectionIds);
-  // Only the home page has a hero under the nav.
-  const overHero = pathname === "/" && heroInView;
-
-  useEffect(() => {
-    const hero = document.querySelector("[data-nav-overlay]");
-    if (!hero) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setHeroInView(entry?.isIntersecting ?? false),
-      { rootMargin: "-64px 0px 0px 0px" },
-    );
-    observer.observe(hero);
-    return () => observer.disconnect();
-  }, [pathname]);
 
   return (
     <header
