@@ -4,6 +4,25 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 
 ## Unreleased
 
+### Added (step 6: bookings)
+- `/reserve` (one form) and `/gursha/book` (three steps, each with its own URL) backed by server actions, Supabase and Resend. `/gursha` now carries the full story, what's included and how paying works.
+- Shared Zod rules (`lib/schemas.ts`) for browser and server: checked on first blur, cleared on edit, submit never disabled, focus moves to the first error. Kind, specific error messages.
+- Spam protection: hidden honeypot field, a per-IP rate limit (hashed IPs only) and Cloudflare Turnstile. Preview and Development use Cloudflare's always-pass test keys.
+- Supabase project `koba-web` (ca-central-1): `reservations`, `gursha_sessions`, `gursha_bookings` and `rate_limits` with Row Level Security and no public access; an atomic `book_gursha()` so two guests can't take the same last seats; a daily job deleting bookings 12 months after the visit.
+- React Email templates for the guest's table and Gursha confirmations and the restaurant's notice.
+- Live "seats left" per Gursha sitting; full sittings can't be chosen.
+- Privacy note under each form.
+- All booking rules in `content/site.ts` (demo values for now); emails and site URL in environment variables.
+
+### Changed
+- Gursha copy: "Everyone at the table pays the same, at the table." No drink choice at booking.
+- Contact details: email required, phone optional.
+- `TURNSTILE_SITE_KEY` renamed `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, because the browser needs it.
+- Dependencies: `react-email` and `@daypicker/react` replace the deprecated `@react-email/components` and the old `react-day-picker` package name. `esbuild`'s install script (react-email's preview tooling) is explicitly not allowed.
+
+### 21st.dev components
+- **DatePicker** (`components/forms/DatePicker.tsx`), from "Calendar [React Day Picker]" by originui, 21st.dev component 462: https://21st.dev/r/originui/calendar. Kept React DayPicker and the component's class-name map. Replaced all styling with Koba tokens (44px day cells, 2px radius, gold selected day, gold focus ring, no shadows), swapped lucide-react for our own chevrons, and set today and the bookable range from the restaurant's time zone.
+
 ### Changed (media polish)
 - Lightbox overlay is fully opaque in the light theme; dark keeps the 94% canvas. DESIGN.md section 4 updated.
 - Both caption files describe the music: `[Music]` at the start and `[Music fades out]` at the end (Amharic: `[ሙዚቃ]`, `[ሙዚቃው ይደበዝዛል]`), placed at the top of the frame. Based on the audio level (a continuous bed fading to silence at 0:59.36); timings and wording are checked again against the voice-over script.
