@@ -156,6 +156,11 @@
     text-wrap: balance;
   }
 
+  /* No page scroll behind an open modal dialog (the lightbox). */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
   [lang="am"] {
     font-family: var(--font-amharic-sans);
     letter-spacing: 0;
