@@ -1,5 +1,6 @@
 /*
-  Native <dialog> lightbox (DESIGN.md section 4): canvas overlay at 94%, gold
+  Native <dialog> lightbox (DESIGN.md section 4): canvas overlay at 94% in
+  dark and fully opaque in light, gold
   controls, 44px targets. Enter 200ms ease-out with @starting-style; the close
   button fades out over 150ms ease-in. Escape and light dismiss close at once.
   Browsers without @starting-style or allow-discrete just show and hide it.
@@ -19,6 +20,12 @@
     opacity var(--motion-200) var(--ease-out),
     display var(--motion-200) allow-discrete,
     overlay var(--motion-200) allow-discrete;
+}
+
+/* Light theme: fully opaque, so the ivory page doesn't show through and
+   compete with the caption. Dark keeps the 94% canvas from DESIGN.md. */
+:global([data-theme="light"]) .dialog {
+  background: var(--color-canvas);
 }
 
 .dialog::backdrop {
