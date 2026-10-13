@@ -1,0 +1,111 @@
+/* Segmented control restyled to DESIGN.md sections 4 and 6. */
+
+.root {
+  display: inline-block;
+  max-width: 100%;
+  padding: 2px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-ctl);
+  background: var(--color-canvas);
+  user-select: none;
+}
+
+.track {
+  position: relative;
+  display: grid;
+  touch-action: manipulation;
+}
+
+/* 44px tall: 12px + 20px line + 12px. */
+.segment {
+  display: block;
+  min-width: 5.5rem;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.25rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.segment[lang="am"] {
+  font-family: var(--font-amharic-sans);
+}
+
+.label {
+  pointer-events: none;
+  color: var(--color-ink-muted);
+  transition: color var(--motion-150) var(--ease-out);
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.thumb {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: var(--radius-ctl);
+  background: var(--color-button);
+  pointer-events: none;
+  transition: transform var(--motion-200) var(--ease-out);
+}
+
+.strip {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  display: grid;
+  transition: transform var(--motion-200) var(--ease-out);
+}
+
+.thumbLabel {
+  color: var(--color-on-gold);
+}
+
+.hits {
+  position: absolute;
+  inset: 0;
+  display: grid;
+}
+
+.hit {
+  min-height: 2.75rem;
+  border: 0;
+  border-radius: var(--radius-ctl);
+  background: transparent;
+  cursor: pointer;
+}
+
+.hit[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.hit:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .track:has(.hit:nth-child(1):hover) .label:nth-child(1):not(.under),
+  .track:has(.hit:nth-child(2):hover) .label:nth-child(2):not(.under),
+  .track:has(.hit:nth-child(3):hover) .label:nth-child(3):not(.under),
+  .track:has(.hit:nth-child(4):hover) .label:nth-child(4):not(.under),
+  .track:has(.hit:nth-child(5):hover) .label:nth-child(5):not(.under) {
+    color: var(--color-ink);
+  }
+}
+
+/* Reduced motion: the thumb jumps; the global rule already limits transitions
+   to opacity and color, this makes the intent explicit here too. */
+@media (prefers-reduced-motion: reduce) {
+  .thumb,
+  .strip {
+    transition: none;
+  }
+}

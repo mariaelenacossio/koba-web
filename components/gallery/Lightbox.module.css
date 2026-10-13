@@ -1,0 +1,139 @@
+/*
+  Native <dialog> lightbox (DESIGN.md section 4): canvas overlay at 94%, gold
+  controls, 44px targets. Enter 200ms ease-out with @starting-style; the close
+  button fades out over 150ms ease-in. Escape and light dismiss close at once.
+  Browsers without @starting-style or allow-discrete just show and hide it.
+*/
+.dialog {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--color-canvas) 94%, transparent);
+  color: var(--color-ink);
+  opacity: 1;
+  transition:
+    opacity var(--motion-200) var(--ease-out),
+    display var(--motion-200) allow-discrete,
+    overlay var(--motion-200) allow-discrete;
+}
+
+.dialog::backdrop {
+  background: transparent;
+}
+
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+  }
+}
+
+.closing {
+  opacity: 0;
+  transition:
+    opacity var(--motion-150) var(--ease-in),
+    display var(--motion-150) allow-discrete,
+    overlay var(--motion-150) allow-discrete;
+}
+
+.inner {
+  box-sizing: border-box;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: calc(env(safe-area-inset-top, 0px) + 0.75rem) 1rem
+    calc(env(safe-area-inset-bottom, 0px) + 1rem);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.count {
+  font-size: var(--text-secondary);
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 0;
+}
+
+.figure {
+  width: 100%;
+  margin: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+/* The largest 16:9 box that fits beside the controls and above the caption. */
+.image {
+  width: min(100%, calc((100svh - 13rem) * 16 / 9));
+  height: auto;
+  border-radius: var(--radius-card);
+}
+
+.caption {
+  max-width: 60ch;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+.control {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-ctl);
+  background: transparent;
+  color: var(--color-gold-ink);
+  cursor: pointer;
+  transition:
+    color var(--motion-150) var(--ease-out),
+    border-color var(--motion-150) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .control:hover {
+    color: var(--color-gold-hover);
+    border-color: var(--color-gold-hover);
+  }
+}
+
+/* Narrow: previous and next sit in the bottom corners, the photo gets the width. */
+@media (max-width: 39.99rem) {
+  .stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .prev,
+  .next {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  }
+  .prev {
+    left: 1rem;
+  }
+  .next {
+    right: 1rem;
+  }
+  .inner {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4.5rem);
+  }
+}
