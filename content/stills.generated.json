@@ -1,0 +1,142 @@
+[
+  {
+    "id": "patio-02",
+    "scene": "patio",
+    "requested": 2,
+    "chosen": 1.533,
+    "blur": 4.887,
+    "src": "/media/stills/patio-02.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "patio-06",
+    "scene": "patio",
+    "requested": 6,
+    "chosen": 5.867,
+    "blur": 5.287,
+    "src": "/media/stills/patio-06.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "coffee-10",
+    "scene": "coffee",
+    "requested": 10,
+    "chosen": 10.467,
+    "blur": 4.83,
+    "src": "/media/stills/coffee-10.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "coffee-14",
+    "scene": "coffee",
+    "requested": 14,
+    "chosen": 14.2,
+    "blur": 5.108,
+    "src": "/media/stills/coffee-14.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "dining-19",
+    "scene": "dining",
+    "requested": 19,
+    "chosen": 18.767,
+    "blur": 4.988,
+    "src": "/media/stills/dining-19.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "dining-24",
+    "scene": "dining",
+    "requested": 24,
+    "chosen": 23.767,
+    "blur": 5.456,
+    "src": "/media/stills/dining-24.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "dining-28",
+    "scene": "dining",
+    "requested": 28,
+    "chosen": 28.3,
+    "blur": 5.754,
+    "src": "/media/stills/dining-28.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "gursha-30",
+    "scene": "gursha",
+    "requested": 30,
+    "chosen": 29.767,
+    "blur": 4.929,
+    "src": "/media/stills/gursha-30.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "gursha-32",
+    "scene": "gursha",
+    "requested": 32,
+    "chosen": 32.267,
+    "blur": 5.333,
+    "src": "/media/stills/gursha-32.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "gursha-37",
+    "scene": "gursha",
+    "requested": 37,
+    "chosen": 36.767,
+    "blur": 5.126,
+    "src": "/media/stills/gursha-37.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "bar-44",
+    "scene": "bar",
+    "requested": 44,
+    "chosen": 43.733,
+    "blur": 5.57,
+    "src": "/media/stills/bar-44.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "bar-49",
+    "scene": "bar",
+    "requested": 49,
+    "chosen": 48.733,
+    "blur": 7.081,
+    "src": "/media/stills/bar-49.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "tej-52",
+    "scene": "tej",
+    "requested": 52,
+    "chosen": 51.567,
+    "blur": 6.597,
+    "src": "/media/stills/tej-52.jpg",
+    "width": 1920,
+    "height": 1080
+  },
+  {
+    "id": "tej-58",
+    "scene": "tej",
+    "requested": 58,
+    "chosen": 58.3,
+    "blur": 6.826,
+    "src": "/media/stills/tej-58.jpg",
+    "width": 1920,
+    "height": 1080
+  }
+]
