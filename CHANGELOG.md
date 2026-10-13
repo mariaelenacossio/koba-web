@@ -4,6 +4,19 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 
 ## Unreleased
 
+### Added (step 4: home sections)
+- Home page in film order: hero, welcome and coffee ceremony, menu, Gursha Table teaser, bar ending on the tej, and visit. Film and gallery keep their anchors until step 5.
+- Hero: the 8s patio loop over a preloaded poster, autoplaying only without reduced motion or data saving, with a Play/Pause film control. The CSS entrance (wordmark, headline, subline, actions; 300ms, 60ms stagger) is the only load animation.
+- Menu and bar from typed content (`content/menu.ts`, `content/bar.ts`) through one `DishList`: text tabs with a sliding gold underline and full arrow-key support, a labelled search across every category, and an empty state with Clear search. On narrow screens the tabs stay on one row that scrolls inside its own box, keeping the active tab in view.
+- Editorial split layout with stills bleeding off the left edge (coffee ceremony, gursha); the bar closes on tej-58.
+- Visit: address, hours and contact placeholders, directions, socials, and a reserve card on the old `#reserve` anchor.
+
+### Changed
+- The mobile tab bar's Reserve fades out while the hero is in view, so the hero's own Reserve a table is the only primary action there. Its slot keeps its width, so the other tabs don't move.
+- New `button` color token for primary button fills, so local text-color overrides (the velvet section's gold-soft) never change a button.
+- ESLint: restored jsx-a11y's exception for `tabIndex` on `tabpanel` (ARIA tabs pattern), which the strict set drops.
+- `next/image` serves AVIF then WebP, at quality 75, from `/media/**` only.
+
 ### Added (step 3: media pipeline)
 - `pnpm media:hero`, `media:stills`, `media:film` and `media:film:upload` in `scripts/media`, using `ffmpeg-static`. The master film path comes from `KOBA_MASTER_FILM` in `.env.local`.
 - Hero loop: `hero.webm` (1.91 MB) and `hero.mp4` (2.47 MB), 8 seconds, muted, plus `hero-poster.jpg`.
