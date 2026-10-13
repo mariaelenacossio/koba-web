@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/*
+  Koba design tokens arrive in step 2 (see DESIGN.md sections 2 to 6).
+  Until then the placeholder page uses the dark canvas and ivory ink directly.
+*/
+
+body {
+  background: #0e241b;
+  color: #f3ebdd;
+}

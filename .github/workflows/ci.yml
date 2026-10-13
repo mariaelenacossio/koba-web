@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  checks:
+    name: Typecheck, lint, format, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+      - run: pnpm build
+
+  # main is protected by convention, not by GitHub settings (private repos on a
+  # personal account can't enforce branch protection). This job fails loudly if
+  # a commit lands on main without a merged pull request.
+  main-via-pr:
+    name: Commit on main came from a pull request
+    if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Look up the pull request for this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(gh api "repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" --jq '[.[] | select(.merged_at != null)] | length')
+          if [ "$count" -eq 0 ]; then
+            echo "::error::Commit ${{ github.sha }} was pushed to main without a pull request. Open a PR from a branch instead."
+            exit 1
+          fi
+          echo "Commit ${{ github.sha }} came from a merged pull request."
