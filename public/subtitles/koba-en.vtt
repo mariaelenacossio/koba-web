@@ -1,5 +1,16 @@
 WEBVTT
 
+NOTE
+Cue timings are estimated from the film's scenes and will be corrected
+against the voice-over script. Sound descriptions are based on the audio
+level: a continuous music bed from the start, fading from about 0:57 to
+silence at 0:59.36. They sit at the top of the frame (line:5%) so they
+don't collide with the speech cues. 
+
+music-start
+00:00:00.000 --> 00:00:04.000 line:5%
+[Music]
+
 1
 00:00:00.500 --> 00:00:03.200
 Welcome to the Koba patio.
@@ -43,3 +54,7 @@ Our bar
 11
 00:00:50.000 --> 00:00:58.500
 Tej, the traditional honey drink, poured fresh at our bar.
+
+music-end
+00:00:57.000 --> 00:00:59.300 line:5%
+[Music fades out]
