@@ -227,27 +227,36 @@ Subtitles
 
 ## 7. Bookings
 
+Pages
+- `/reserve`: one form (date, time, guests, name, email, optional phone, notes).
+- `/gursha`: the story, what's included and how paying works, linking to the booking.
+- `/gursha/book`: three steps (when, your details, review), each at its own URL (`?step=1|2|3`). Answers are kept in `sessionStorage` for the tab and cleared once sent.
+
 Flow
-1. Guest fills the form. Client validation with the shared Zod schema (validate on blur, never disable submit).
-2. Server action re-validates, checks Turnstile and rate limit, then writes to Supabase.
-3. Resend sends a confirmation to the guest and a notification to the restaurant.
-4. Guest sees a success message announced with `aria-live`.
+1. Guest fills the form. Client validation with the shared Zod schema in `lib/schemas.ts` (validate on first blur, clear on edit, never disable submit, scroll to the first error).
+2. Server action (`app/actions/reserve.ts`, `app/actions/gursha.ts`) re-validates, checks the honeypot field, the per-IP rate limit and Turnstile, then writes to Supabase.
+3. Resend sends a confirmation to the guest (reply-to: the restaurant) and a notification to the restaurant (reply-to: the guest). If email fails, the booking is still saved and the guest is told the restaurant will contact them.
+4. Guest sees a success message with an icon and a reference, announced with `aria-live`.
+
+Contact details
+- Email is required (confirmations go there). Phone is optional.
+- No drink choice at booking: Gursha guests choose their included drink at the table. One set type per booking.
 
 Database tables (`supabase/migrations`)
-- `reservations`: id, created_at, date, time_slot, guests, name, contact, notes, status (`requested`, `confirmed`, `cancelled`).
-- `gursha_bookings`: id, created_at, date, time_slot, seats, set_type (`standard`, `vegetarian`, `vegan`), name, contact, notes, status.
-- `gursha_sessions`: date, time_slot, capacity, seats_taken. Booking fails gracefully when full.
+- `reservations`: id, created_at, date, time_slot, guests, name, email, phone, notes, status (`requested`, `confirmed`, `cancelled`).
+- `gursha_bookings`: id, created_at, date, time_slot, seats, set_type (`standard`, `vegetarian`, `vegan`), name, email, phone, notes, status.
+- `gursha_sessions`: date, time_slot, capacity, seats_taken. Created on first booking for a sitting.
+- `rate_limits`: SHA-256 hashed keys only, never raw IPs.
+- `book_gursha()` locks the sitting's row, so two guests can't both take the last seats; a full sitting returns a kind message naming the seats left and the other sitting. `gursha_seats_left()` powers the live seat count.
 
-Security
-- Row Level Security on for all tables. No public read or write. Only the server action, using the service key, can insert.
-- No payment is taken in v1. Gursha price is shown, paid at the restaurant.
-- Store only what's needed to confirm a booking.
+Security and privacy
+- Row Level Security on for all tables with no policies, and no grants to the public roles. Only the server, using the service key, gets in.
+- No payment is taken in v1. Gursha seats are paid at the table.
+- Store only what's needed to confirm a booking. A daily `pg_cron` job deletes bookings 12 months after the visit and stale rate-limit rows after a day. Every form says so.
 
-Still to confirm (placeholders until then)
-- Email address that receives bookings
-- "From" address and domain for guest emails (domain must be verified in Resend)
-- Gursha Table capacity per session
-- Opening hours and time slots
+Booking rules
+- All in `content/site.ts` (`booking`): time zone, closed days, hours, booking window, reservation times and party size, Gursha sittings, capacity, seats per booking, price, retention. "Today" is always today in Vancouver.
+- Current values are demo values until the restaurant confirms them; swapping them in is one small PR.
 
 ---
 
@@ -291,8 +300,8 @@ SUPABASE_SERVICE_ROLE_KEY=
 RESEND_API_KEY=
 BOOKINGS_NOTIFY_EMAIL=
 BOOKINGS_FROM_EMAIL=
-TURNSTILE_SITE_KEY=
-TURNSTILE_SECRET_KEY=
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=   (public; Production uses the real key, Preview and Development use Cloudflare's test key)
+TURNSTILE_SECRET_KEY=             (Production real secret; Preview and Development use Cloudflare's test secret)
 BLOB_STORE_ID=
 VERCEL_OIDC_TOKEN=        (development only, from vercel env pull; refreshed automatically)
 ```
