@@ -65,7 +65,6 @@ export function GalleryGrid({ stills }: { stills: readonly Still[] }) {
               }}
               type="button"
               onClick={() => openAt(i)}
-              aria-label={`Open photo: ${s.alt}`}
               className="group block w-full cursor-zoom-in overflow-hidden rounded-card border border-line bg-surface text-left"
             >
               <span className="block overflow-hidden">
@@ -81,11 +80,10 @@ export function GalleryGrid({ stills }: { stills: readonly Still[] }) {
                   )}
                 />
               </span>
-              <span
-                aria-hidden="true"
-                className="block border-t border-line px-4 py-3 text-meta font-medium text-gold-ink"
-              >
+              {/* The name starts with the visible caption (WCAG 2.5.3), then the photo. */}
+              <span className="block border-t border-line px-4 py-3 text-meta font-medium text-gold-ink">
                 {filters.find((f) => f.id === s.category)?.label}
+                <span className="sr-only">. Open photo: {s.alt}</span>
               </span>
             </button>
           </li>

@@ -31,7 +31,7 @@ test.describe("Gallery", () => {
   test("filters photos", async ({ page }) => {
     await page.goto("/#gallery");
     const gallery = page.locator("#gallery");
-    const photos = gallery.getByRole("button", { name: /^Open photo:/ });
+    const photos = gallery.getByRole("button", { name: /Open photo:/ });
     await expect(photos).toHaveCount(stills.length);
 
     await gallery.getByRole("button", { name: "Patio", exact: true }).click();
@@ -49,7 +49,7 @@ test.describe("Gallery", () => {
     await page.goto("/#gallery");
     const first = page
       .locator("#gallery")
-      .getByRole("button", { name: /^Open photo:/ })
+      .getByRole("button", { name: /Open photo:/ })
       .first();
     await first.click();
 

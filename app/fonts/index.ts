@@ -28,10 +28,11 @@ export const jost = localFont({
   adjustFontFallback: "Arial",
 });
 
-// The Ethiopic files are about 190KB each, so they aren't preloaded: Amharic
-// lines swap in once the font arrives instead of competing with the hero.
+// Amharic fonts are subsets holding only the characters the site uses (about
+// 20KB each instead of 190KB; see scripts/fonts). They still aren't preloaded,
+// so they never compete with the hero; Amharic lines swap in when they land.
 export const notoSerifEthiopic = localFont({
-  src: "./NotoSerifEthiopic-ethiopic-wght.woff2",
+  src: "./NotoSerifEthiopic-subset-wght.woff2",
   weight: "400 500",
   style: "normal",
   variable: "--font-noto-serif-ethiopic",
@@ -41,7 +42,7 @@ export const notoSerifEthiopic = localFont({
 });
 
 export const notoSansEthiopic = localFont({
-  src: "./NotoSansEthiopic-ethiopic-wght.woff2",
+  src: "./NotoSansEthiopic-subset-wght.woff2",
   weight: "400 500",
   style: "normal",
   variable: "--font-noto-sans-ethiopic",

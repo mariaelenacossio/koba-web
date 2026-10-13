@@ -15,23 +15,22 @@ export function bookingDate(testInfo: TestInfo, extra = 0): string {
   return date;
 }
 
-function ordinal(n: number): string {
-  const s = ["th", "st", "nd", "rd"];
-  const v = n % 100;
-  return `${n}${s[(v - 20) % 10] ?? s[v] ?? s[0]}`;
-}
-
-/** The calendar's label for a day, e.g. "Saturday, November 28th, 2026". */
+/** The calendar's label for a day, e.g. "Saturday 28 November 2026". */
 export function dayLabel(date: string): string {
-  const d = new Date(`${date}T12:00:00Z`);
-  const weekday = d.toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
-  const month = d.toLocaleDateString("en-US", { month: "long", timeZone: "UTC" });
-  return `${weekday}, ${month} ${ordinal(d.getUTCDate())}, ${d.getUTCFullYear()}`;
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  })
+    .format(new Date(`${date}T12:00:00Z`))
+    .replace(",", "");
 }
-
 /** Moves the calendar forward to the date's month and picks the day. */
 export async function pickDate(page: Page, date: string) {
-  const day = page.getByRole("button", { name: dayLabel(date), exact: true });
+  // Starts with the date, then maybe ", today" or ", selected".
+  const day = page.getByRole("button", { name: new RegExp(`^${dayLabel(date)}`) });
   for (let i = 0; i < 3 && !(await day.isVisible()); i++) {
     await page.getByRole("button", { name: "Go to the Next Month" }).click();
   }

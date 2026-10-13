@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { GurshaBooking } from "@/components/forms/GurshaBooking";
+import { GurshaSkeleton } from "@/components/forms/BookingSkeleton";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export default function GurshaBookPage() {
         lead="Choose a sitting, tell us who's coming, and we'll hold your seats."
       />
       {/* The steps read the URL (?step=), so they render in the browser. */}
-      <Suspense fallback={<p className="text-ink-muted">Loading the booking steps.</p>}>
+      <Suspense fallback={<GurshaSkeleton />}>
         <GurshaBooking />
       </Suspense>
     </div>
