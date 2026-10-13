@@ -51,3 +51,6 @@ next-env.d.ts
 /masters/
 *.mov
 *.master.mp4
+
+# media pipeline output that stays local (full film before Blob upload, contact sheets)
+/.media-out/
