@@ -4,6 +4,18 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 
 ## Unreleased
 
+### Added (step 5: gallery, lightbox, film)
+- Film section: the full film from the public Blob store, framed in a 1px gold border, with the dining-room still as its poster. The video, poster and metadata load only when the player nears the viewport (native `loading="lazy"` plus an IntersectionObserver fallback). No autoplay.
+- Subtitles as `<track>` files: Amharic as captions (it transcribes the film's own voice) and English as subtitles. A segmented control (Amharic, English, Off) switches them and stays in step with the browser's own captions menu.
+- Gallery: the 14 film stills in masonry columns with filters (All, Patio, Coffee ceremony, Dining, Gursha, Bar) and a live count of photos shown.
+- Lightbox on a native modal `<dialog>`: focus trapped by the browser, Escape and a click outside the photo close it at once, the Close button fades out over 150ms, arrow keys page, focus returns to the thumbnail that opened it, and the page doesn't scroll behind it. Canvas overlay at 94% with gold 44px controls.
+
+### Changed
+- ARCHITECTURE.md: no animation library at all, matching the decision to leave Motion out; sections 2, 3 and 5 updated.
+
+### 21st.dev components
+- **SegmentedControl** (`components/ui/SegmentedControl.tsx`), from "Segmented Control" by ddoemonn, 21st.dev component 23552: https://21st.dev/r/ddoemonn/segmented-control. Kept its radio-group semantics, roving focus, arrow, Home and End keys, and sliding-thumb technique. Rewrote its Motion spring animation as one 200ms CSS transform transition, and replaced all styling with Koba tokens: 44px targets, 2px radius, no shadows, gold focus ring, 15px labels, and `lang` support for the Amharic option.
+
 ### Added (step 4: home sections)
 - Home page in film order: hero, welcome and coffee ceremony, menu, Gursha Table teaser, bar ending on the tej, and visit. Film and gallery keep their anchors until step 5.
 - Hero: the 8s patio loop over a preloaded poster, autoplaying only without reduced motion or data saving, with a Play/Pause film control. The CSS entrance (wordmark, headline, subline, actions; 300ms, 60ms stagger) is the only load animation.

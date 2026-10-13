@@ -36,7 +36,7 @@ Tags
 | Framework | Next.js (App Router) | Static pages for speed, server actions for bookings, built-in image and font handling |
 | Language | TypeScript, strict mode | Catches errors in menu data and booking forms early |
 | Styling | Tailwind CSS v4 with tokens in `@theme` | Design tokens live in one place; matches the color, type, and spacing system |
-| Motion | CSS transitions and scroll-driven animations first; Motion (Framer Motion) only for the hero entrance and dialog/menu presence | Keeps the bundle light and motion on the compositor |
+| Motion | CSS transitions, `@starting-style` and scroll-driven animations only; no animation library | Keeps the bundle light and motion on the compositor |
 | Fonts | `next/font/local` with the woff2 files bundled in `app/fonts` (OFL): Bodoni Moda, Jost, Noto Serif Ethiopic, Noto Sans Ethiopic | Self-hosted, no layout shift, builds never depend on Google |
 | Images | `next/image` with AVIF and WebP | Correct sizes, lazy loading, no layout shift |
 | Forms | Server Actions + Zod validation (shared schema client and server) | One source of truth for validation rules |
@@ -52,7 +52,7 @@ Tags
 Not using (on purpose)
 - No CMS for v1. Menu and bar content live in typed files. Revisit if the restaurant team needs to edit menus themselves.
 - No full component library installed wholesale (MUI, Chakra, a complete shadcn kit). Individual 21st.dev components are allowed as starting points under the rules in section 12.
-- No jQuery, no carousel libraries, no heavy animation libraries beyond Motion.
+- No jQuery, no carousel libraries, no animation libraries (Motion included).
 
 ---
 
@@ -78,8 +78,9 @@ koba-web/
     gursha/
     media/                Still (a film still with its alt text and size)
     visit/                VisitSection
-    gallery/              GalleryGrid, Lightbox (native <dialog>)
-    film/                 FilmPlayer, SubtitleToggle
+    gallery/              GallerySection, GalleryGrid, Lightbox (native <dialog>)
+    film/                 FilmSection, FilmPlayer (subtitles use ui/SegmentedControl)
+    ui/                   SegmentedControl (adapted from 21st.dev; see CHANGELOG)
     forms/                Field, Stepper, TimeSlots, SubmitButton
     brand/                Wordmark, TibebBand, LeafMotif
     nav/                  Nav, BookMenu, MobileTabBar, ThemeToggle
@@ -190,8 +191,9 @@ Rules
 - No bounce, elastic, or infinite decorative loops.
 - `prefers-reduced-motion: reduce`: hero shows the poster with a Play film button, no scroll-driven effects, opacity-only changes at 150ms or instant.
 
-Where Motion (Framer Motion) is allowed
-- `HeroEntrance` and `AnimatePresence` for the lightbox and nav dropdown. Everything else is CSS.
+No animation library
+- Motion (Framer Motion) is not used. The hero entrance is a CSS keyframe; the nav dropdown and the lightbox enter with `@starting-style` and leave with `transition-behavior: allow-discrete`. Browsers without those features show and hide them instantly, with no half-visible state.
+- Components adapted from 21st.dev that ship with Motion are rewritten to CSS transitions before they're committed.
 
 ---
 
