@@ -4,6 +4,10 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 
 ## Unreleased
 
+### Changed (media polish)
+- Lightbox overlay is fully opaque in the light theme; dark keeps the 94% canvas. DESIGN.md section 4 updated.
+- Both caption files describe the music: `[Music]` at the start and `[Music fades out]` at the end (Amharic: `[ሙዚቃ]`, `[ሙዚቃው ይደበዝዛል]`), placed at the top of the frame. Based on the audio level (a continuous bed fading to silence at 0:59.36); timings and wording are checked again against the voice-over script.
+
 ### Added (step 5: gallery, lightbox, film)
 - Film section: the full film from the public Blob store, framed in a 1px gold border, with the dining-room still as its poster. The video, poster and metadata load only when the player nears the viewport (native `loading="lazy"` plus an IntersectionObserver fallback). No autoplay.
 - Subtitles as `<track>` files: Amharic as captions (it transcribes the film's own voice) and English as subtitles. A segmented control (Amharic, English, Off) switches them and stays in step with the browser's own captions menu.

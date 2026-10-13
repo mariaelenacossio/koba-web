@@ -110,7 +110,7 @@ Signature elements
 Media
 - Images use film stills only. 4px radius. Explicit width and height. Real alt text.
 - Film player framed with a 1px gold border and a segmented subtitle control (Amharic, English, Off).
-- Lightbox is a native dialog with a canvas overlay at 94% opacity and gold controls.
+- Lightbox is a native dialog with a canvas overlay, 94% opacity in dark and fully opaque in light (so the ivory page never shows through), and gold controls.
 
 ---
 
