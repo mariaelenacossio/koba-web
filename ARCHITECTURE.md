@@ -71,10 +71,13 @@ koba-web/
     api/
       health/route.ts
   components/
-    hero/                 HeroVideo, HeroEntrance
-    menu/                 MenuTabs, MenuList, MenuSearch
+    hero/                 Hero, HeroVideo (the entrance is CSS: .hero-rise)
+    home/                 Welcome
+    menu/                 DishList (tabs, search, list; shared with the bar), MenuSection
     bar/
     gursha/
+    media/                Still (a film still with its alt text and size)
+    visit/                VisitSection
     gallery/              GalleryGrid, Lightbox (native <dialog>)
     film/                 FilmPlayer, SubtitleToggle
     forms/                Field, Stepper, TimeSlots, SubmitButton
@@ -83,6 +86,7 @@ koba-web/
     layout/               Footer, SectionHeading, SocialLinks
     icons/                line icons (functional only)
   content/
+    listing.ts            shared types for menu and bar
     menu.ts               typed menu data
     bar.ts                typed drinks data
     gallery.ts            stills, categories, alt text

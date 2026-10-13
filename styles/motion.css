@@ -34,3 +34,40 @@
     transform: none;
   }
 }
+
+/*
+  The one signature moment: the hero entrance. Wordmark, headline, subline
+  and actions rise 6px and fade in, 300ms each, 60ms apart (--i is the step).
+  The resting state is the visible state, so with reduced motion or no CSS
+  animation support the hero is simply there.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .hero-rise {
+    animation: hero-rise var(--motion-300) var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 60ms + 100ms);
+  }
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+
+  /* Section images settle from 1.03 to 1 as they scroll in. Decorative, so
+     browsers without scroll-driven animations just show the image. */
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .settle img {
+      animation: settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 45%;
+    }
+    @keyframes settle {
+      from {
+        transform: scale(1.03);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+  }
+}
