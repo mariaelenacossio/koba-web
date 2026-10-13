@@ -4,6 +4,21 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 
 ## Unreleased
 
+### Added (step 7: tests, accessibility, performance)
+- Vitest unit tests: booking dates in Vancouver time (midnight and the November clock change), the 60-day window, every validation message, the rate-limit switch, and Amharic font coverage.
+- Playwright end-to-end tests on desktop (1280px), mobile (375px) and iPhone WebKit: both booking flows, validation timing, a Gursha sitting filling up while a guest reviews, menu search and empty state, gallery filters, lightbox and Book menu by keyboard, theme, skip link and no sideways scroll. axe checks every page in both themes.
+- Test bookings use Resend's test inbox and are removed before and after each run; `release_gursha_seats()` gives their seats back.
+- Lighthouse CI with the section 8 targets, plus Playwright and Lighthouse jobs in GitHub Actions.
+- `RATE_LIMIT_DISABLED` for test runs; production ignores it.
+
+### Changed (step 7)
+- Amharic fonts are subsets of the 64 characters the site uses: 377KB down to 39KB. Lighthouse's simulated first paint on mobile went from about 3.0s to 1.2s.
+- Booking forms show placeholders shaped like the form while loading, so the footer no longer jumps (layout shift 0.4 to 0).
+- Phones get a portrait crop of the hero poster with an honest `srcset`. 3x phones now get a sharp poster, and the poster rather than the video is the LCP.
+- Calendar days are named "Tuesday 13 October 2026", and gallery thumbnails start their name with the visible caption, so voice control matches what's on screen (WCAG 2.5.3).
+- After a Gursha request is sent, the step leaves the URL.
+- Results on the deployed preview (mobile, median of 3): Performance 98 to 100, Accessibility and Best Practices 100, LCP 1.4 to 2.5s, CLS 0.
+
 ### Added (step 6: bookings)
 - `/reserve` (one form) and `/gursha/book` (three steps, each with its own URL) backed by server actions, Supabase and Resend. `/gursha` now carries the full story, what's included and how paying works.
 - Shared Zod rules (`lib/schemas.ts`) for browser and server: checked on first blur, cleared on edit, submit never disabled, focus moves to the first error. Kind, specific error messages.

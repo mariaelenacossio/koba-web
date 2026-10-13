@@ -37,7 +37,7 @@ Tags
 | Language | TypeScript, strict mode | Catches errors in menu data and booking forms early |
 | Styling | Tailwind CSS v4 with tokens in `@theme` | Design tokens live in one place; matches the color, type, and spacing system |
 | Motion | CSS transitions, `@starting-style` and scroll-driven animations only; no animation library | Keeps the bundle light and motion on the compositor |
-| Fonts | `next/font/local` with the woff2 files bundled in `app/fonts` (OFL): Bodoni Moda, Jost, Noto Serif Ethiopic, Noto Sans Ethiopic | Self-hosted, no layout shift, builds never depend on Google |
+| Fonts | `next/font/local` with the woff2 files bundled in `app/fonts` (OFL): Bodoni Moda, Jost, Noto Serif Ethiopic, Noto Sans Ethiopic. The Amharic fonts are subsets of the characters the site uses (`pnpm fonts:ethiopic`) | Self-hosted, no layout shift, builds never depend on Google. Subsets cut the Amharic fonts from 377KB to 39KB |
 | Images | `next/image` with AVIF and WebP | Correct sizes, lazy loading, no layout shift |
 | Forms | Server Actions + Zod validation (shared schema client and server) | One source of truth for validation rules |
 | Database | Supabase (Postgres) | Stores reservations and Gursha seat bookings |
@@ -248,6 +248,7 @@ Database tables (`supabase/migrations`)
 - `gursha_sessions`: date, time_slot, capacity, seats_taken. Created on first booking for a sitting.
 - `rate_limits`: SHA-256 hashed keys only, never raw IPs.
 - `book_gursha()` locks the sitting's row, so two guests can't both take the last seats; a full sitting returns a kind message naming the seats left and the other sitting. `gursha_seats_left()` powers the live seat count.
+- `release_gursha_seats(ids)` deletes Gursha bookings and gives their seats back in one transaction. The test cleanup uses it, and real cancellations can too.
 
 Security and privacy
 - Row Level Security on for all tables with no policies, and no grants to the public roles. Only the server, using the service key, gets in.
@@ -272,10 +273,18 @@ Production targets
 - Lighthouse mobile: Performance 90+, Accessibility 100, Best Practices 100, SEO 100.
 - LCP under 2.5s, CLS under 0.1, INP under 200ms.
 
+Tests
+- `pnpm test`: Vitest unit tests in `tests/unit` (booking dates and time zone, schemas, the rate-limit switch, and that the Amharic subset fonts cover every Amharic character on the site).
+- `pnpm test:e2e`: Playwright against a production build (`pnpm build` first), in three projects: desktop at 1280px, mobile at 375px, and an iPhone WebKit run of the `@smoke` tests. Includes axe on every page in both themes. The KOBA wordmark is skipped by the contrast rule only, as a logotype (WCAG 1.4.3 exempts logos).
+- Booking tests write to the real Supabase project and send real emails, but only to Resend's test inbox: guests are `delivered+e2e-<run>@resend.dev` and restaurant notices go to `delivered@resend.dev`. Each project books its own dates near the end of the 60-day window, so real sittings are never touched.
+- Cleanup runs before and after every run (`tests/e2e/support/cleanup.ts`): it deletes every booking with a tagged test email, from this run or a crashed earlier one, and gives Gursha seats back with `release_gursha_seats()`. CI runs one Playwright job at a time so runs can't clean up each other's bookings.
+- The rate limit would block a test run, so the tests start the server with `RATE_LIMIT_DISABLED=1`. Production (`VERCEL_ENV=production`) ignores the flag.
+- `pnpm test:lighthouse`: Lighthouse CI, mobile preset, median of three runs on each page against a local production build (`lighthouserc.json`). Every target above is asserted except LCP, which Lighthouse simulates pessimistically on localhost (about a second slower than the deployed site), so CI fails above 3.5s as a regression guard. Check the 2.5s target against a deployment. Previews always score SEO 60 because Vercel sends `x-robots-tag: noindex` on them; production doesn't.
+
 Tooling
 - ESLint (Next.js config + jsx-a11y), Prettier, TypeScript strict.
 - Husky + lint-staged to run lint and format on commit.
-- GitHub Actions: typecheck, lint, Playwright, and Lighthouse CI on every pull request.
+- GitHub Actions on every pull request: typecheck, lint, format, unit tests and build; Playwright with axe; Lighthouse CI. Playwright needs the repository secrets `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `RESEND_API_KEY`, and uses Cloudflare's Turnstile test keys.
 
 ---
 
@@ -304,6 +313,7 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY=   (public; Production uses the real key, Preview
 TURNSTILE_SECRET_KEY=             (Production real secret; Preview and Development use Cloudflare's test secret)
 BLOB_STORE_ID=
 VERCEL_OIDC_TOKEN=        (development only, from vercel env pull; refreshed automatically)
+RATE_LIMIT_DISABLED=      (tests only: "1" turns the booking rate limit off; ignored in production)
 ```
 
 ---

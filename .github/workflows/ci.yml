@@ -31,6 +31,72 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
+  e2e:
+    name: Playwright and axe
+    runs-on: ubuntu-latest
+    # One run at a time: every run cleans up all tagged test bookings, so two
+    # runs in parallel could remove each other's bookings mid-test.
+    concurrency:
+      group: e2e-bookings
+      cancel-in-progress: false
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      BOOKINGS_FROM_EMAIL: "Koba <onboarding@resend.dev>"
+      BOOKINGS_NOTIFY_EMAIL: delivered@resend.dev
+      NEXT_PUBLIC_SITE_URL: http://localhost:3100
+      # Cloudflare's published Turnstile test keys: always pass, never secret.
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
+      TURNSTILE_SECRET_KEY: 1x0000000000000000000000000000000AA
+    steps:
+      - name: Check the test secrets are set
+        run: |
+          for name in SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY RESEND_API_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Add $name under Settings > Secrets and variables > Actions."
+              exit 1
+            fi
+          done
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - run: pnpm build
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test:lighthouse
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/reports/
+          retention-days: 7
+
   # main is protected by convention, not by GitHub settings (private repos on a
   # personal account can't enforce branch protection). This job fails loudly if
   # a commit lands on main without a merged pull request.
