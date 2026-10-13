@@ -79,7 +79,9 @@ koba-web/
     film/                 FilmPlayer, SubtitleToggle
     forms/                Field, Stepper, TimeSlots, SubmitButton
     brand/                Wordmark, TibebBand, LeafMotif
-    nav/                  Nav, MobileTabBar, ThemeToggle
+    nav/                  Nav, BookMenu, MobileTabBar, ThemeToggle
+    layout/               Footer, SectionHeading, SocialLinks
+    icons/                line icons (functional only)
   content/
     menu.ts               typed menu data
     bar.ts                typed drinks data
@@ -132,9 +134,13 @@ Color (dark default, light via `data-theme="light"`)
 --color-ink         #F3EBDD   light #12291F
 --color-ink-muted   #B9B09C   light #56604F
 --color-gold        #C9A24A   light #8C6A1E
---color-gold-soft   #E3C27A
---color-brass       #A9743A
+--color-gold-ink    #C9A24A   light #7A5A14   (small gold text, primary button)
+--color-gold-soft   #E3C27A   light #A88433
+--color-gold-hover  #E3C27A   light #5F460F   (primary button hover)
+--color-amharic     #E3C27A   light #7A5A14   (Amharic titles)
+--color-brass       #A9743A   light #8A5A26
 --color-line        rgba(243,235,221,.12)   light rgba(18,41,31,.12)
+--color-error       #E08A72   light #A3432B
 ```
 
 Type
@@ -149,7 +155,8 @@ Radius
 - 2px buttons and inputs, 4px images and cards.
 
 Theme
-- Respect `prefers-color-scheme` on first visit, then remember the visitor's choice in `localStorage`.
+- Dark on every first visit, whatever the system setting. Dark is the brand.
+- Once the visitor uses the theme toggle, remember their choice in `localStorage` (`koba-theme`) and use it on every later visit.
 - No flash of the wrong theme: set the theme attribute in an inline script in `<head>`.
 
 ---
