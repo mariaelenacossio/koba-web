@@ -37,10 +37,12 @@ export function useBookingForm<T extends Record<string, string | number>>(
     [schema],
   );
 
+  // Pass `value` when the field commits and blurs in one step (the date
+  // picker), since `values` won't have the new value until the next render.
   const blur = useCallback(
-    (name: keyof T & string) => {
+    <K extends keyof T & string>(name: K, value: T[K] = values[name]) => {
       touched.current.add(name);
-      setErrors((e) => ({ ...e, [name]: checkField(schema, name, values[name]) ?? undefined }));
+      setErrors((e) => ({ ...e, [name]: checkField(schema, name, value) ?? undefined }));
     },
     [schema, values],
   );

@@ -212,7 +212,7 @@ export function GurshaBooking() {
               value={values.date}
               onChange={(v) => {
                 set("date", v);
-                blur("date");
+                blur("date", v);
               }}
               labelledBy={`${uid}-date-label`}
               describedBy={errors.date ? `${uid}-date-error` : undefined}
