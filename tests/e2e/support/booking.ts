@@ -1,0 +1,46 @@
+import { expect, type Page, type TestInfo } from "@playwright/test";
+import { addDays, todayInRestaurant, weekdayOf } from "@/lib/booking-dates";
+
+/*
+  Each project books on its own dates, so parallel projects never share a
+  sitting and seat counts stay predictable. All dates sit near the end of the
+  60-day window, away from real bookings.
+*/
+const PROJECT_OFFSET: Record<string, number> = { desktop: 30, mobile: 38, "webkit-mobile": 46 };
+
+/** An open day (not Monday) for this project, `extra` days after its base date. */
+export function bookingDate(testInfo: TestInfo, extra = 0): string {
+  let date = addDays(todayInRestaurant(), (PROJECT_OFFSET[testInfo.project.name] ?? 30) + extra);
+  while (weekdayOf(date) === 1) date = addDays(date, 1);
+  return date;
+}
+
+function ordinal(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return `${n}${s[(v - 20) % 10] ?? s[v] ?? s[0]}`;
+}
+
+/** The calendar's label for a day, e.g. "Saturday, November 28th, 2026". */
+export function dayLabel(date: string): string {
+  const d = new Date(`${date}T12:00:00Z`);
+  const weekday = d.toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
+  const month = d.toLocaleDateString("en-US", { month: "long", timeZone: "UTC" });
+  return `${weekday}, ${month} ${ordinal(d.getUTCDate())}, ${d.getUTCFullYear()}`;
+}
+
+/** Moves the calendar forward to the date's month and picks the day. */
+export async function pickDate(page: Page, date: string) {
+  const day = page.getByRole("button", { name: dayLabel(date), exact: true });
+  for (let i = 0; i < 3 && !(await day.isVisible()); i++) {
+    await page.getByRole("button", { name: "Go to the Next Month" }).click();
+  }
+  await day.click();
+}
+
+/** Turnstile's test key passes straight away, but the token still has to arrive. */
+export async function waitForTurnstile(page: Page) {
+  await expect(page.locator('input[name="cf-turnstile-response"]')).not.toHaveValue("", {
+    timeout: 15_000,
+  });
+}
