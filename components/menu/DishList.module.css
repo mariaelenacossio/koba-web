@@ -1,0 +1,234 @@
+/* Menu and bar lists (DESIGN.md section 4). */
+
+.root {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.tools {
+  display: grid;
+  gap: 1.5rem;
+  align-items: end;
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .tools {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+/* One row of tabs; on narrow screens it scrolls inside its own box. */
+.tabScroller {
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.tabScroller::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 2.75rem;
+  padding: 0.75rem 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--color-ink-muted);
+  font: 500 var(--text-body) / 1.2 var(--font-body);
+  white-space: nowrap;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--motion-150) var(--ease-out);
+  outline-offset: -2px;
+}
+
+.tab[aria-selected="true"] {
+  color: var(--color-ink);
+}
+
+@media (hover: hover) {
+  .tab:hover {
+    color: var(--color-ink);
+  }
+}
+
+.tabAmharic {
+  font-size: var(--text-meta);
+  line-height: 1.4;
+  font-weight: 400;
+  color: var(--color-amharic);
+}
+
+/* 1px wide, scaled to the tab's width: the underline moves by transform only. */
+.ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 2px;
+  background: var(--color-gold);
+  transform-origin: 0 0;
+  transition: transform var(--motion-200) var(--ease-out);
+}
+
+.tabsSearching .tab {
+  color: var(--color-ink-muted);
+}
+
+.tabsSearching .ink {
+  opacity: 0;
+}
+
+.search {
+  display: grid;
+  gap: 0.5rem;
+  min-width: min(20rem, 100%);
+}
+
+.searchLabel {
+  font-size: var(--text-secondary);
+  font-weight: 500;
+  color: var(--color-ink-muted);
+}
+
+.searchField {
+  position: relative;
+  color: var(--color-ink-muted);
+}
+
+.searchField svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.searchField input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-ctl);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font: 400 var(--text-body) / 1.4 var(--font-body);
+  transition: border-color var(--motion-150) var(--ease-out);
+}
+
+.searchField input:focus-visible {
+  border-color: var(--color-gold);
+}
+
+/* L1 surface with hairline rows. */
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--inset-shadow-edge);
+  padding: 0.25rem 1rem;
+}
+
+@media (min-width: 40rem) {
+  .panel {
+    padding: 0.5rem 1.5rem;
+  }
+}
+
+.tabpanel:focus-visible {
+  outline-offset: -2px;
+}
+
+.groupTitle {
+  padding-top: 1rem;
+  font-family: var(--font-body);
+  font-size: var(--text-secondary);
+  font-weight: 500;
+  color: var(--color-gold-ink);
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  gap: 0.25rem;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.rowHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.nameAmharic {
+  margin-left: 0.5rem;
+  font-family: var(--font-amharic-serif);
+  font-size: var(--text-body);
+  font-weight: 400;
+  color: var(--color-amharic);
+}
+
+.diet {
+  margin-left: 0.5rem;
+  font-family: var(--font-body);
+  font-size: var(--text-secondary);
+  font-weight: 400;
+  color: var(--color-ink-muted);
+}
+
+.price {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: var(--text-price);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-gold-ink);
+  white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.description {
+  max-width: 60ch;
+  color: var(--color-ink-muted);
+}
+
+.empty {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+  padding-block: 2rem;
+}

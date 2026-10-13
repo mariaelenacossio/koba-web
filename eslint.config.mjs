@@ -11,7 +11,16 @@ const eslintConfig = defineConfig([
   // rules. Apply the full strict rule set on top, without registering it twice.
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
-    rules: jsxA11y.flatConfigs.strict.rules,
+    rules: {
+      ...jsxA11y.flatConfigs.strict.rules,
+      // ARIA tabs pattern: a tab panel without focusable content takes
+      // tabIndex 0 so keyboard users can reach it. The recommended set allows
+      // this; strict drops the exception, so restore it for tabpanel only.
+      "jsx-a11y/no-noninteractive-tabindex": [
+        "error",
+        { tags: [], roles: ["tabpanel"], allowExpressionValues: true },
+      ],
+    },
   },
   // Formatting is Prettier's job; turn off any stylistic rules that overlap.
   prettier,

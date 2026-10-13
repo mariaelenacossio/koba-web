@@ -24,6 +24,7 @@
   --color-gold-ink: #c9a24a;
   --color-gold-soft: #e3c27a;
   --color-gold-hover: #e3c27a;
+  --color-button: #c9a24a;
   --color-amharic: #e3c27a;
   --color-brass: #a9743a;
   --color-line: rgb(243 235 221 / 0.12);
@@ -112,6 +113,7 @@
   --color-gold-ink: #7a5a14;
   --color-gold-soft: #a88433;
   --color-gold-hover: #5f460f;
+  --color-button: #7a5a14;
   --color-amharic: #7a5a14;
   --color-brass: #8a5a26;
   --color-line: rgb(18 41 31 / 0.12);
@@ -120,11 +122,15 @@
   --color-on-gold: #f6f0e4;
   --shadow-l2: 0 16px 40px rgb(18 41 31 / 0.07);
   --inset-shadow-edge: inset 0 0 0 transparent;
+  --velvet-gold-ink: #7a5a14;
 }
 
 @layer base {
   :root {
     color-scheme: dark;
+    /* Small gold text on the velvet surface: gold-soft in dark, because gold
+       there is 4.48:1. Light keeps gold-ink (4.60:1 on light velvet). */
+    --velvet-gold-ink: var(--color-gold-soft);
     --nav-h: 4rem;
     scroll-padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + 1rem);
     -webkit-text-size-adjust: 100%;
@@ -193,8 +199,9 @@
   .btn:active {
     transform: scale(0.98);
   }
+  /* Its own token, so local text-color overrides (like .velvet) never change the fill. */
   .btn-primary {
-    background: var(--color-gold-ink);
+    background: var(--color-button);
     color: var(--color-on-gold);
   }
   .btn-secondary {
@@ -246,6 +253,105 @@
     .icon-btn:hover {
       border-color: currentColor;
     }
+  }
+
+  /*
+    Editorial split: an image bleeds off one outer edge, text holds the inner
+    column on the shared 1200px grid. Stacks image first below 1024px.
+  */
+  .split {
+    display: grid;
+    gap: 2rem;
+  }
+  .split-copy {
+    display: grid;
+    gap: 1rem;
+    align-content: center;
+    min-width: 0;
+    padding-inline: 1rem;
+  }
+  .settle {
+    overflow: clip;
+  }
+  @media (min-width: 40rem) {
+    .split-copy {
+      padding-inline: 2rem;
+    }
+  }
+  @media (min-width: 64rem) {
+    .split {
+      --gutter: 2rem;
+      grid-template-columns:
+        minmax(var(--gutter), 1fr)
+        minmax(0, calc(var(--container-page) * 0.55))
+        minmax(0, calc(var(--container-page) * 0.45))
+        minmax(var(--gutter), 1fr);
+      gap: 0;
+      align-items: center;
+    }
+    .split-left .split-media {
+      grid-column: 1 / 3;
+      grid-row: 1;
+    }
+    .split-left .split-copy {
+      grid-column: 3;
+      grid-row: 1;
+      padding-inline: 4rem 0;
+    }
+    .split-right {
+      grid-template-columns:
+        minmax(var(--gutter), 1fr)
+        minmax(0, calc(var(--container-page) * 0.45))
+        minmax(0, calc(var(--container-page) * 0.55))
+        minmax(var(--gutter), 1fr);
+    }
+    .split-right .split-copy {
+      grid-column: 2;
+      grid-row: 1;
+      padding-inline: 0 4rem;
+    }
+    .split-right .split-media {
+      grid-column: 3 / 5;
+      grid-row: 1;
+    }
+    .split-left .split-media img {
+      border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    }
+    .split-right .split-media img {
+      border-radius: var(--radius-card) 0 0 var(--radius-card);
+    }
+  }
+
+  /* The only gradient on the site: the dark scrim that keeps hero text legible. */
+  .hero-scrim {
+    background: linear-gradient(
+      to top,
+      rgb(8 22 16 / 0.95) 0%,
+      rgb(8 22 16 / 0.86) 40%,
+      rgb(8 22 16 / 0.55) 66%,
+      rgb(8 22 16 / 0) 90%
+    );
+  }
+  @media (min-width: 64rem) {
+    .hero-scrim {
+      background:
+        linear-gradient(
+          to top,
+          rgb(8 22 16 / 0.9) 0%,
+          rgb(8 22 16 / 0.35) 45%,
+          rgb(8 22 16 / 0) 75%
+        ),
+        linear-gradient(
+          to right,
+          rgb(8 22 16 / 0.82) 0%,
+          rgb(8 22 16 / 0.5) 35%,
+          rgb(8 22 16 / 0) 60%
+        );
+    }
+  }
+
+  .velvet {
+    --color-gold-ink: var(--velvet-gold-ink);
   }
 
   .skip-link {

@@ -3,6 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  images: {
+    // AVIF first, WebP as the fallback; the JPG sources are the last resort.
+    formats: ["image/avif", "image/webp"],
+    qualities: [75],
+    // Only our own media folder can be optimized, with no query strings.
+    localPatterns: [{ pathname: "/media/**", search: "" }],
+  },
   turbopack: {
     rules: {
       // Run Tailwind on global stylesheets only. CSS Modules (*.module.css)
