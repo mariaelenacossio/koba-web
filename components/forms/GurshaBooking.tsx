@@ -194,7 +194,7 @@ export function GurshaBooking() {
   const progress = <p className="text-secondary text-ink-muted">Step {step} of 3</p>;
 
   return (
-    <div className="grid gap-6">
+    <div className="grid max-w-3xl gap-6">
       <div className="grid gap-1">
         {progress}
         <h2 ref={headingRef} tabIndex={-1} className="text-h3 focus:outline-none">
@@ -203,7 +203,7 @@ export function GurshaBooking() {
       </div>
 
       {step === 1 && (
-        <form onSubmit={onNext} noValidate className="grid gap-6">
+        <form onSubmit={onNext} noValidate className="grid max-w-md gap-6">
           <div className="grid gap-2" data-field="date">
             <span id={`${uid}-date-label`} className="text-secondary font-medium">
               Date
