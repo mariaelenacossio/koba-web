@@ -13,7 +13,7 @@ import { ensureDir, ffmpeg, localOut, masterFilm, publicMedia, root } from "./li
 
 // Scene and requested time in seconds, in film order. Starts from the list in
 // CLAUDE.md section 9, with three swaps approved on 2026-10-13 for variety:
-// dining 0:27 -> 0:28, gursha 0:40 -> 0:34, tej 0:54 -> 0:52.
+// dining 0:27 -> 0:28, gursha 0:40 -> 0:30, tej 0:54 -> 0:52.
 const TARGETS = [
   ["patio", 2],
   ["patio", 6],
@@ -22,8 +22,8 @@ const TARGETS = [
   ["dining", 19],
   ["dining", 24],
   ["dining", 28],
+  ["gursha", 30],
   ["gursha", 32],
-  ["gursha", 34],
   ["gursha", 37],
   ["bar", 44],
   ["bar", 49],

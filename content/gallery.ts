@@ -28,10 +28,10 @@ const alt = {
   "dining-24": "A server in a green and gold jacket looks after a full dining room.",
   "dining-28":
     "A server in white gloves brings a platter of injera and stews to a table as the hostess looks on.",
+  "gursha-30":
+    "Guests at the Gursha Table feed each other a bite of injera, the hostess standing behind them.",
   "gursha-32":
-    "Guests reach across one shared injera platter at the Gursha Table, feeding each other a bite.",
-  "gursha-34":
-    "The hostess and her guests reach into the same injera platter at the Gursha Table, laughing.",
+    "The hostess and her guests tear injera from one shared platter at the Gursha Table.",
   "gursha-37": "The hostess laughs with guests at the Gursha Table, emerald velvet drapes behind.",
   "bar-44": "The bartender stirs a drink at the green marble bar while the hostess looks on.",
   "bar-49": "The bartender stirs a cocktail in front of gold honeycomb panels and amber bottles.",

@@ -7,7 +7,7 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 ### Added (step 3: media pipeline)
 - `pnpm media:hero`, `media:stills`, `media:film` and `media:film:upload` in `scripts/media`, using `ffmpeg-static`. The master film path comes from `KOBA_MASTER_FILM` in `.env.local`.
 - Hero loop: `hero.webm` (1.91 MB) and `hero.mp4` (2.47 MB), 8 seconds, muted, plus `hero-poster.jpg`.
-- 14 film stills, each the sharpest frame within half a second of its timestamp, with alt text and gallery categories in `content/gallery.ts`. Swapped dining 0:27, gursha 0:40 and tej 0:54 for 0:28, 0:34 and 0:52 for variety.
+- 14 film stills, each the sharpest frame within half a second of its timestamp, with alt text and gallery categories in `content/gallery.ts`. Swapped dining 0:27, gursha 0:40 and tej 0:54 for 0:28, 0:30 and 0:52 for variety.
 - Subtitles `koba-am.vtt` and `koba-en.vtt` in `public/subtitles` (cue timing still estimated from the scenes).
 - Film upload to Vercel Blob with OIDC auth (`BLOB_STORE_ID` and `VERCEL_OIDC_TOKEN` from `vercel env pull`), via `@vercel/blob`.
 
