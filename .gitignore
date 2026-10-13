@@ -54,3 +54,10 @@ next-env.d.ts
 
 # media pipeline output that stays local (full film before Blob upload, contact sheets)
 /.media-out/
+
+# Lighthouse CI output
+/blob-report/
+/.lighthouseci/
+
+# Claude Code local config
+/.claude/

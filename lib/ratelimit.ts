@@ -1,5 +1,6 @@
 import "server-only";
 import { createHash } from "node:crypto";
+import { rateLimitDisabled } from "./ratelimit-policy";
 import { supabase } from "./supabase";
 
 /*
@@ -12,6 +13,7 @@ const WINDOW_SECONDS = 10 * 60;
 const MAX_REQUESTS = 5;
 
 export async function allowRequest(ip: string | null, action: string): Promise<boolean> {
+  if (rateLimitDisabled()) return true;
   const key = createHash("sha256")
     .update(`${action}:${ip ?? "unknown"}`)
     .digest("hex");

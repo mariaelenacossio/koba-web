@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ReserveForm } from "@/components/forms/ReserveForm";
+import { ReserveSkeleton } from "@/components/forms/BookingSkeleton";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { booking } from "@/content/site";
 
@@ -21,7 +22,7 @@ export default function ReservePage() {
       />
       <p className="-mt-6 text-secondary text-ink-muted">{booking.hoursLabel}. Closed Mondays.</p>
       {/* The calendar needs today's date, so the form renders per request, not at build time. */}
-      <Suspense fallback={<p className="text-ink-muted">Loading the booking form.</p>}>
+      <Suspense fallback={<ReserveSkeleton />}>
         <ReserveForm />
       </Suspense>
     </div>

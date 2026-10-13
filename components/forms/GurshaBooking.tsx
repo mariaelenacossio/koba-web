@@ -144,6 +144,8 @@ export function GurshaBooking() {
         try {
           sessionStorage.removeItem(DRAFT_KEY);
         } catch {}
+        // The request is sent, so the step no longer belongs in the URL.
+        router.replace(pathname, { scroll: false });
         return;
       }
       if (result.fieldErrors) {
