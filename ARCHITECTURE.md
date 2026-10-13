@@ -201,7 +201,7 @@ Scripts (`scripts/media`)
 - `pnpm media:hero` cuts the first 8 seconds into `public/media/hero.webm` (VP9) and `hero.mp4` (H.264), muted, 1600px wide, and writes `hero-poster.jpg` from the first frame. It fails if either video is over 3MB.
 - `pnpm media:stills` extracts the 14 gallery stills. For each timestamp it scores every frame within half a second with ffmpeg's `blurdetect` and keeps the sharpest. It writes 1920x1080 high-quality JPGs to `public/media/stills`, records the chosen frames in `content/stills.generated.json`, and writes a labelled contact sheet to `.media-out` for review. Timestamps follow `CLAUDE.md` section 9, with three swaps for variety: dining 0:28, gursha 0:30, tej 0:52.
 - `pnpm media:film` compresses the full film to 1080p H.264 with AAC audio in `.media-out/koba-film.mp4` (gitignored).
-- `pnpm media:film:upload` uploads that file to Vercel Blob and writes its URL to `content/media.generated.json`.
+- `pnpm media:film:upload` uploads that file to Vercel Blob as `film/koba-film-<hash>.mp4` and writes its URL to `content/media.generated.json`. The short content hash means a new encode gets a new URL, because blobs are cached for a year.
 - `pnpm media` runs hero, stills and film in order.
 
 Images

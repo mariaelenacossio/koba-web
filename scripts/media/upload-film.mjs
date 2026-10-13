@@ -9,12 +9,12 @@
 //
 // The film is played straight from <video src>, so the store must be public.
 // A private store only serves blobs through an authenticated function.
-import { createReadStream, existsSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { createReadStream, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { head, put } from "@vercel/blob";
 import { fail, loadEnv, localOut, root, sizeMB } from "./lib.mjs";
 
-const PATHNAME = "film/koba-film.mp4";
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
 loadEnv();
@@ -28,7 +28,12 @@ if (!process.env.BLOB_STORE_ID || !process.env.VERCEL_OIDC_TOKEN) {
 const file = resolve(localOut, "koba-film.mp4");
 if (!existsSync(file)) fail("No .media-out/koba-film.mp4 yet. Run `pnpm media:film` first.");
 
-console.log(`Uploading koba-film.mp4 (${sizeMB(file).toFixed(1)} MB) to ${PATHNAME} ...`);
+// The film is cached for a year, so its URL carries a short content hash:
+// a new encode gets a new URL, and re-uploading the same file is a no-op.
+const hash = createHash("sha256").update(readFileSync(file)).digest("hex").slice(0, 10);
+const PATHNAME = `film/koba-film-${hash}.mp4`;
+const total = sizeMB(file);
+console.log(`Uploading koba-film.mp4 (${total.toFixed(1)} MB) to ${PATHNAME} ...`);
 let blob;
 try {
   blob = await put(PATHNAME, createReadStream(file), {
@@ -38,7 +43,10 @@ try {
     allowOverwrite: true,
     cacheControlMaxAge: ONE_YEAR,
     multipart: true,
-    onUploadProgress: ({ percentage }) => process.stdout.write(`\r  ${percentage.toFixed(0)}%`),
+    // A stream has no known total, so the SDK's percentage stays at 0.
+    // Report bytes sent against the file size instead.
+    onUploadProgress: ({ loaded }) =>
+      process.stdout.write(`\r  ${(loaded / 1048576).toFixed(1)} of ${total.toFixed(1)} MB`),
   });
 } catch (error) {
   fail(
