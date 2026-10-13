@@ -1,0 +1,85 @@
+/*
+  Enter 200ms ease-out, exit 150ms ease-in (ARCHITECTURE.md section 5).
+  @starting-style drives the enter fade. Browsers without it (or without
+  transition-behavior: allow-discrete) simply show and hide the menu with no
+  animation: the open and closed states are both complete on their own.
+*/
+.menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  width: min(18rem, calc(100vw - 2rem));
+  margin: 0;
+  padding: 0.5rem;
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--inset-shadow-edge), var(--shadow-l2);
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--motion-200) var(--ease-out),
+    transform var(--motion-200) var(--ease-out),
+    display var(--motion-200) allow-discrete;
+}
+
+.menu[hidden] {
+  display: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition-duration: var(--motion-150);
+  transition-timing-function: var(--ease-in);
+}
+
+/* Escape and Tab close instantly; nothing waits for an animation. */
+.menu[data-instant] {
+  transition: none;
+}
+
+@starting-style {
+  .menu:not([hidden]) {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 2.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-ctl);
+  color: var(--color-ink);
+  text-decoration: none;
+  outline-offset: -2px;
+}
+
+.item:focus-visible {
+  background: var(--color-surface);
+}
+
+@media (hover: hover) {
+  .item:hover {
+    background: var(--color-surface);
+  }
+}
+
+.label {
+  font-weight: 500;
+  font-size: var(--text-body);
+  line-height: 1.3;
+}
+
+.detail {
+  font-size: var(--text-secondary);
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+.amharic {
+  font-size: var(--text-meta);
+  line-height: 1.4;
+  color: var(--color-amharic);
+}

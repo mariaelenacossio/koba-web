@@ -1,0 +1,36 @@
+/*
+  Motion tokens (ARCHITECTURE.md section 5).
+  Durations: 100, 150, 200, 300ms only. Ease-out to enter, ease-in to exit.
+  Animate transform and opacity only.
+*/
+
+:root {
+  --motion-100: 100ms; /* micro feedback */
+  --motion-150: 150ms; /* exits, hover */
+  --motion-200: 200ms; /* dropdowns, dialogs, tabs */
+  --motion-300: 300ms; /* hero entrance pieces */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Reduced motion: no movement. Opacity and color changes only, at 150ms. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-property:
+      opacity, color, background-color, border-color, visibility, display !important;
+    transition-duration: var(--motion-150) !important;
+    scroll-behavior: auto !important;
+  }
+  .btn:active {
+    transform: none;
+  }
+}

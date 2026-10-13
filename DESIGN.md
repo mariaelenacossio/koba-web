@@ -19,7 +19,7 @@ Night at Koba. Deep forest green walls with gold leaf banana leaves, carved waln
 
 ## 2. Color palette and roles
 
-Dark is the default theme. Light is based on the ivory of the hostess's habesha kemis.
+Dark is the default theme, and every first visit opens in dark whatever the system setting. Light is based on the ivory of the hostess's habesha kemis and is used only after the visitor picks it.
 
 | Token | Dark | Light | Role |
 | --- | --- | --- | --- |
@@ -28,8 +28,10 @@ Dark is the default theme. Light is based on the ivory of the hostess's habesha 
 | surface-2 | #1D4535 | #E6DAC3 | Hover, active, velvet sections like the Gursha Table |
 | ink | #F3EBDD | #12291F | Body text and headings |
 | ink-muted | #B9B09C | #56604F | Descriptions, helper text |
-| gold | #C9A24A | #8C6A1E | Accent (about 10%): primary buttons, links, prices, focus, active nav |
-| gold-soft | #E3C27A | #A88433 | Hover on gold, Amharic titles |
+| gold | #C9A24A | #8C6A1E | Accent (about 10%): focus ring, borders, large display numbers, the wordmark |
+| gold-ink | #C9A24A | #7A5A14 | Gold used as text or behind text: links, prices, active nav, primary button fill, small gold labels |
+| gold-soft | #E3C27A | #A88433 | Amharic titles and hover on gold in dark; decorative only in light |
+| gold-hover | #E3C27A | #5F460F | Primary button hover |
 | brass | #A9743A | #8A5A26 | Rare secondary accent |
 | line | rgba(243,235,221,.12) | rgba(18,41,31,.12) | Dividers and borders |
 | error | #E08A72 | #A3432B | Form errors only, always with text |
@@ -37,6 +39,9 @@ Dark is the default theme. Light is based on the ivory of the hostess's habesha 
 Rules
 - Gold is for accents and large text. Never long body copy in gold.
 - Every text pairing meets WCAG AA in both themes.
+- Small gold text uses gold-ink, never gold. In light, gold on canvas is 4.41:1 and gold-soft is 3.08:1, both under AA; gold-ink is 5.61:1, and ivory on a gold-ink button is 5.61:1.
+- Amharic titles: gold-soft in dark, gold-ink in light.
+- Inside the dark velvet section (surface-2), small gold text uses gold-soft. Gold there is 4.48:1, just under AA.
 - No gradients as decoration. The only gradient allowed is the dark scrim over the hero video.
 
 ---
@@ -49,12 +54,12 @@ Rules
 | Display (hero) | Bodoni Moda | 400 | clamp(44px, 7vw, 88px) | 1.1 |
 | H2 | Bodoni Moda | 400 | clamp(32px, 4.5vw, 52px) | 1.15 |
 | H3 | Bodoni Moda | 500 | 24px | 1.25 |
-| Amharic title | Noto Serif Ethiopic | 500 | 16 to 18px, gold-soft | 1.4 |
+| Amharic title | Noto Serif Ethiopic | 500 | 16 to 18px, gold-soft (gold-ink in light) | 1.4 |
 | Body | Jost | 400 | 16px (17px for long prose) | 1.6 |
 | Secondary | Jost | 400 | 14px | 1.5 |
 | UI labels, buttons | Jost | 500 | 15 to 16px, sentence case | 1.2 |
 | Meta | Jost | 400 | 12px | 1.4 |
-| Prices | Bodoni Moda | 500 | 18 to 20px, gold | 1.2 |
+| Prices | Bodoni Moda | 500 | 18 to 20px, gold-ink | 1.2 |
 
 Rules
 - Three weights only: 400, 500, 600. Nothing above 700.
@@ -70,7 +75,7 @@ Rules
 ## 4. Component stylings
 
 Buttons
-- Primary: solid gold, canvas-colored text, 2px radius, min height 44px, padding 12px 24px. Hover gold-soft at 150ms. Press scale .98.
+- Primary: solid gold-ink, canvas-colored text, 2px radius, min height 44px, padding 12px 24px. Hover gold-hover at 150ms. Press scale .98.
 - Secondary: transparent, 1px gold border, ink text. Hover fills surface-2.
 - Labels are sentence case and start with a verb: Reserve a table, Book a Gursha seat, Play film, Get directions. No arrows, no OK or Submit.
 
