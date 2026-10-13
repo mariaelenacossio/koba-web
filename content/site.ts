@@ -22,6 +22,38 @@ export const site = {
 
 export type SocialIcon = (typeof site.socials)[number]["icon"];
 
+/**
+ * Booking rules. DEMO VALUES until the restaurant confirms them; swapping in
+ * the real ones is a change to this object only. Emails and the site URL are
+ * environment variables (BOOKINGS_NOTIFY_EMAIL, BOOKINGS_FROM_EMAIL,
+ * NEXT_PUBLIC_SITE_URL).
+ */
+export const booking = {
+  timeZone: "America/Vancouver",
+  /** 0 is Sunday, 1 is Monday. Closed Mondays. */
+  closedWeekdays: [1],
+  hoursLabel: "Tuesday to Sunday, 5:00 to 10:00 pm",
+  /** How many days ahead a guest can book, counting today as day 0. */
+  windowDays: 60,
+  reservation: {
+    times: ["5:00 pm", "6:30 pm", "8:00 pm"],
+    maxGuests: 8,
+  },
+  gursha: {
+    times: ["6:30 pm", "8:30 pm"],
+    seatsPerSitting: 12,
+    maxSeatsPerBooking: 6,
+    pricePerSeat: 45,
+    setTypes: [
+      { value: "standard", label: "Standard set" },
+      { value: "vegetarian", label: "Vegetarian set" },
+      { value: "vegan", label: "Vegan set" },
+    ],
+  },
+  /** Bookings are deleted this many months after the visit. */
+  retentionMonths: 12,
+} as const;
+
 /** Home page sections, in film order, as they appear in the main nav. */
 export const sectionNav = [
   { id: "menu", label: "Menu", amharic: "ምናሌ" },
