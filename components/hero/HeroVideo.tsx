@@ -54,6 +54,7 @@ export function HeroVideo() {
   });
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const posterRef = useRef<HTMLImageElement>(null);
   const [playing, setPlaying] = useState(false);
   const [shown, setShown] = useState(false);
 
@@ -76,10 +77,33 @@ export function HeroVideo() {
     video.addEventListener("playing", onPlaying);
     video.addEventListener("pause", onPause);
     reduce.addEventListener("change", onReduceChange);
-    if (!reduce.matches && !saveData) {
+    // The loop waits until the poster has painted and the browser is idle, so
+    // its 1.5MB download never competes with the poster (the LCP image) on a
+    // slow connection. The poster looks the same either way; the video just
+    // fades in over it a moment later.
+    let idle = 0;
+    let cancelled = false;
+    const start = () => {
+      if (cancelled || reduce.matches || saveData) return;
       video.play().catch(() => setPlaying(false));
+    };
+    const whenIdle = () => {
+      if ("requestIdleCallback" in window) idle = requestIdleCallback(start, { timeout: 1500 });
+      else idle = globalThis.setTimeout(start, 200) as unknown as number; // Browsers without requestIdleCallback
+    };
+    const poster = posterRef.current;
+    if (!poster || poster.complete) whenIdle();
+    else {
+      poster.addEventListener("load", whenIdle, { once: true });
+      poster.addEventListener("error", whenIdle, { once: true });
     }
+
     return () => {
+      cancelled = true;
+      if ("cancelIdleCallback" in window) cancelIdleCallback(idle);
+      clearTimeout(idle);
+      poster?.removeEventListener("load", whenIdle);
+      poster?.removeEventListener("error", whenIdle);
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("pause", onPause);
       reduce.removeEventListener("change", onReduceChange);
@@ -98,14 +122,14 @@ export function HeroVideo() {
       <div className="absolute inset-0 -z-20">
         <picture>
           <source media={TALL} srcSet={tall.srcSet} sizes="100vw" />
-          <img {...wide} alt="" fetchPriority="high" className="object-cover" />
+          <img ref={posterRef} {...wide} alt="" fetchPriority="high" className="object-cover" />
         </picture>
         <video
           ref={videoRef}
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           aria-hidden="true"
           tabIndex={-1}
           className={cn(

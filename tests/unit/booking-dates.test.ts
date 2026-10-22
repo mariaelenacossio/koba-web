@@ -15,10 +15,22 @@ describe("todayInRestaurant", () => {
     expect(todayInRestaurant(new Date("2026-10-14T07:00:00Z"))).toBe("2026-10-14");
   });
 
-  it("follows the switch to standard time", () => {
-    // Clocks go back on Nov 1, 2026, so midnight moves from 07:00 to 08:00 UTC.
-    expect(todayInRestaurant(new Date("2026-11-02T07:30:00Z"))).toBe("2026-11-01");
-    expect(todayInRestaurant(new Date("2026-11-02T08:00:00Z"))).toBe("2026-11-02");
+  it("flips at local midnight in autumn, whatever the clock rules", () => {
+    // British Columbia's clock rules are changing (newer time zone data keeps
+    // Vancouver on UTC-7 all year), so take the offset from Intl itself and
+    // check the date changes exactly at local midnight on Nov 3, 2026.
+    const offsetMinutes = (instant: Date) => {
+      const name = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Vancouver",
+        timeZoneName: "longOffset",
+      }).format(instant);
+      const [, sign, h, m] = name.match(/GMT([+-])(\d{2}):(\d{2})/)!;
+      return (sign === "-" ? -1 : 1) * (Number(h) * 60 + Number(m));
+    };
+    const utcMidnight = Date.UTC(2026, 10, 3);
+    const localMidnight = utcMidnight - offsetMinutes(new Date(utcMidnight)) * 60_000;
+    expect(todayInRestaurant(new Date(localMidnight - 60_000))).toBe("2026-11-02");
+    expect(todayInRestaurant(new Date(localMidnight + 60_000))).toBe("2026-11-03");
   });
 });
 
