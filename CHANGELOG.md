@@ -4,6 +4,19 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 
 ## Unreleased
 
+### Changed (step 8: UX audit and accessibility review)
+- Icon-only controls (theme toggle, calendar months, guest and seat steppers, lightbox, social links) show a tooltip on hover and on keyboard focus. Escape hides it, and the pointer can move onto it (WCAG 1.4.13).
+- Form controls have a stronger edge (`line-control`), at least 3:1 against every background, so inputs, steppers, selectors and the menu search can be seen (WCAG 1.4.11). Added to DESIGN.md.
+- Both booking forms say "Every field is needed unless it says optional", and required inputs carry `aria-required`.
+- The table form keeps a draft for the tab, like the Gursha steps. Both forms ask before the tab closes with an unsent request.
+- `/gursha/book` no longer moves focus into the form when the page opens, so the skip link and page heading come first. Focus still moves to each step's heading when the guest changes step.
+- Turnstile shows the site's gold focus ring while focus is inside it.
+- At 320px the calendar's columns share the width (about 40px), so the booking pages don't scroll sideways (WCAG 1.4.10). From 352px up, days stay 44x44.
+- Screen readers hear "2 guests" rather than "2" from the steppers, and the calendar's month buttons are grouped as "Change month" instead of a generic "Navigation bar" landmark.
+- Calendar month buttons read "Show previous month" and "Show next month", in sentence case. The lightbox buttons read "Show previous photo" and "Show next photo", and the social links read "Follow Koba on …".
+- `/gursha` ends with "Book a Gursha seat" too, for guests who read to the end.
+- Failed booking writes and spam-trap rejections log an error code (never guest details), so a failure can be traced.
+
 ### Added (step 7: tests, accessibility, performance)
 - Vitest unit tests: booking dates in Vancouver time (midnight and the November clock change), the 60-day window, every validation message, the rate-limit switch, and Amharic font coverage.
 - Playwright end-to-end tests on desktop (1280px), mobile (375px) and iPhone WebKit: both booking flows, validation timing, a Gursha sitting filling up while a guest reviews, menu search and empty state, gallery filters, lightbox and Book menu by keyboard, theme, skip link and no sideways scroll. axe checks every page in both themes.

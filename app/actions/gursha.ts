@@ -36,8 +36,10 @@ export async function requestGurshaSeats(
 ): Promise<BookingResult> {
   const parsed = gurshaSchema.safeParse(input);
   if (!parsed.success) {
-    if (parsed.error.issues.some((i) => i.path[0] === "website"))
+    if (parsed.error.issues.some((i) => i.path[0] === "website")) {
+      console.warn("Booking rejected: spam trap filled");
       return { ok: false, message: genericFailure };
+    }
     return { ok: false, fieldErrors: fieldErrors(parsed.error) };
   }
   const data = parsed.data;
@@ -82,11 +84,16 @@ export async function requestGurshaSeats(
             : `The ${data.time} sitting is full.${other ? ` Try the ${other} sitting or another day.` : " Try another day."}`,
       };
     }
+    // Code only: never the guest's details (ARCHITECTURE.md section 7).
+    console.error("Gursha booking failed", error.code);
     return { ok: false, message: genericFailure };
   }
 
   const row = (rows as Array<{ booking_id: string }> | null)?.[0];
-  if (!row) return { ok: false, message: genericFailure };
+  if (!row) {
+    console.error("Gursha booking failed", "no row");
+    return { ok: false, message: genericFailure };
+  }
 
   const reference = row.booking_id.slice(0, 8).toUpperCase();
   const date = formatDate(data.date);

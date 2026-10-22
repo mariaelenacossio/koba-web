@@ -19,8 +19,10 @@ export async function requestReservation(
   const parsed = reservationSchema.safeParse(input);
   if (!parsed.success) {
     // A filled honeypot is a bot: answer like a normal failure, save nothing.
-    if (parsed.error.issues.some((i) => i.path[0] === "website"))
+    if (parsed.error.issues.some((i) => i.path[0] === "website")) {
+      console.warn("Booking rejected: spam trap filled");
       return { ok: false, message: genericFailure };
+    }
     return { ok: false, fieldErrors: fieldErrors(parsed.error) };
   }
   const data = parsed.data;
@@ -53,7 +55,11 @@ export async function requestReservation(
     })
     .select("id")
     .single();
-  if (error || !row) return { ok: false, message: genericFailure };
+  if (error || !row) {
+    // Code only: never the guest's details (ARCHITECTURE.md section 7).
+    console.error("Reservation insert failed", error?.code ?? "no row");
+    return { ok: false, message: genericFailure };
+  }
 
   const reference = String(row.id).slice(0, 8).toUpperCase();
   const date = formatDate(data.date);

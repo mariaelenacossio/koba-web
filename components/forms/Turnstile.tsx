@@ -78,6 +78,13 @@ export const Turnstile = forwardRef<TurnstileHandle, { onToken: (token: string) 
       };
     }, []);
 
-    return <div ref={box} className="min-h-[65px] w-full max-w-[400px]" />;
+    // Cloudflare's widget can't be styled from here, so the box shows the
+    // site's focus ring while focus is inside it (WCAG 2.4.7).
+    return (
+      <div
+        ref={box}
+        className="min-h-[65px] w-full max-w-[400px] rounded-ctl focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-gold"
+      />
+    );
   },
 );

@@ -168,8 +168,18 @@
   color: var(--color-ink-muted);
 }
 
+/*
+  Very narrow screens (320px, WCAG 1.4.10 reflow): seven 44px columns don't
+  fit, so columns share the width (about 40px at 320px) and stay 44px tall.
+  From 352px up, every day is a full 44x44 target again.
+*/
 @media (max-width: 22rem) {
   .dayPicker {
     padding: 0.5rem 0.25rem;
+  }
+  .weekday,
+  .day,
+  .dayButton {
+    width: min(2.75rem, calc((100vw - 2rem - 0.5rem - 2px) / 7));
   }
 }
