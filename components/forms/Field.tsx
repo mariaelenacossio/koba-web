@@ -9,7 +9,12 @@ type Props = {
   hint?: string;
   error?: string | null;
   className?: string;
-  children: (a11y: { id: string; "aria-describedby"?: string; "aria-invalid"?: true }) => ReactNode;
+  children: (a11y: {
+    id: string;
+    "aria-describedby"?: string;
+    "aria-invalid"?: true;
+    "aria-required"?: true;
+  }) => ReactNode;
 };
 
 /**
@@ -29,6 +34,7 @@ export function Field({ id, label, required = true, hint, error, className, chil
       {children({
         id,
         "aria-describedby": describedBy,
+        ...(required ? { "aria-required": true } : {}),
         ...(error ? { "aria-invalid": true } : {}),
       })}
       {hint && !error && (
@@ -63,6 +69,13 @@ export function FieldError({ id, children }: { id?: string; children: ReactNode 
   );
 }
 
+/** Said once at the top of each form; optional fields say so in their label. */
+export function RequiredNote() {
+  return (
+    <p className="text-secondary text-ink-muted">Every field is needed unless it says optional.</p>
+  );
+}
+
 /** Shared input styling: surface background, 1px line border, 2px radius, 44px tall. */
 export const inputClass =
-  "min-h-11 w-full rounded-ctl border border-line-strong bg-surface px-3 py-2 text-body text-ink transition-colors duration-150 placeholder:text-ink-muted/80 hover:border-ink-muted focus-visible:border-gold aria-invalid:border-error";
+  "min-h-11 w-full rounded-ctl border border-line-control bg-surface px-3 py-2 text-body text-ink transition-colors duration-150 placeholder:text-ink-muted/80 hover:border-ink-muted focus-visible:border-gold aria-invalid:border-error";

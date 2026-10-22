@@ -32,7 +32,7 @@ export async function pickDate(page: Page, date: string) {
   // Starts with the date, then maybe ", today" or ", selected".
   const day = page.getByRole("button", { name: new RegExp(`^${dayLabel(date)}`) });
   for (let i = 0; i < 3 && !(await day.isVisible()); i++) {
-    await page.getByRole("button", { name: "Go to the Next Month" }).click();
+    await page.getByRole("button", { name: "Show next month" }).click();
   }
   await day.click();
 }

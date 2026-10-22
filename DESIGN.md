@@ -34,6 +34,7 @@ Dark is the default theme, and every first visit opens in dark whatever the syst
 | gold-hover | #E3C27A | #5F460F | Primary button hover |
 | brass | #A9743A | #8A5A26 | Rare secondary accent |
 | line | rgba(243,235,221,.12) | rgba(18,41,31,.12) | Dividers and borders |
+| line-control | rgba(243,235,221,.48) | rgba(18,41,31,.56) | Edges of inputs, steppers, selectors and search: at least 3:1 against canvas, surface and velvet (WCAG 1.4.11) |
 | error | #E08A72 | #A3432B | Form errors only, always with text |
 
 Rules
@@ -93,7 +94,7 @@ Menu and bar lists
 
 Forms
 - Visible labels above every input. Placeholders only for format examples.
-- Inputs: surface background, 1px line border, 2px radius, min height 44px. Focus: 2px gold ring with 2px offset.
+- Inputs: surface background, 1px line-control border, 2px radius, min height 44px. Focus: 2px gold ring with 2px offset.
 - Validate on first blur, clear errors as soon as the guest corrects them, never disable submit.
 - Errors in plain, kind language that explains how to fix it.
 - Stepper buttons at least 44x44.

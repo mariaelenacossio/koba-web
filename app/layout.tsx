@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Footer } from "@/components/layout/Footer";
 import { MobileTabBar } from "@/components/nav/MobileTabBar";
 import { Nav } from "@/components/nav/Nav";
+import { TooltipDismiss } from "@/components/ui/Tooltip";
 import { themeInitScript } from "@/lib/theme";
 import { bodoni, jost, notoSansEthiopic, notoSerifEthiopic } from "./fonts";
 import "@/styles/globals.css";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main" className="skip-link">
           Skip to main content
         </a>
+        <TooltipDismiss />
         <Nav />
         <main id="main" tabIndex={-1} className="focus:outline-none">
           {children}

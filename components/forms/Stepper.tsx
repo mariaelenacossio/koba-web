@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import { Tooltip } from "@/components/ui/Tooltip";
 
 type Props = {
   label: string;
@@ -24,40 +25,46 @@ export function Stepper({ label, value, min, max, onChange, unit, hint }: Props)
       <span id={`${id}-label`} className="text-secondary font-medium">
         {label}
       </span>
-      <div className="flex w-max items-center rounded-ctl border border-line-strong bg-surface">
-        <button
-          type="button"
-          className={btn}
-          aria-label={`Remove one ${unit}`}
-          aria-disabled={value <= min || undefined}
-          onClick={() => value > min && set(value - 1)}
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-            <path d="M6 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
+      <div className="flex w-max items-center rounded-ctl border border-line-control bg-surface">
+        <Tooltip label={`Remove one ${unit}`} side="top" align="start">
+          <button
+            type="button"
+            className={btn}
+            aria-label={`Remove one ${unit}`}
+            aria-disabled={value <= min || undefined}
+            onClick={() => value > min && set(value - 1)}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <path d="M6 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </Tooltip>
         <output
           aria-live="polite"
           className="min-w-12 border-x border-line-strong text-center font-display text-xl leading-11 tabular-nums"
         >
           {value}
+          {/* Announced as "3 guests", not just "3". */}
+          <span className="sr-only"> {value === 1 ? unit : `${unit}s`}</span>
         </output>
-        <button
-          type="button"
-          className={btn}
-          aria-label={`Add one ${unit}`}
-          aria-disabled={value >= max || undefined}
-          onClick={() => value < max && set(value + 1)}
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
-            <path
-              d="M6 12h12M12 6v12"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
+        <Tooltip label={`Add one ${unit}`} side="top">
+          <button
+            type="button"
+            className={btn}
+            aria-label={`Add one ${unit}`}
+            aria-disabled={value >= max || undefined}
+            onClick={() => value < max && set(value + 1)}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+              <path
+                d="M6 12h12M12 6v12"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </Tooltip>
       </div>
       {hint && <p className="text-meta text-ink-muted">{hint}</p>}
     </div>

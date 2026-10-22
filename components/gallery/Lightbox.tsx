@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, type KeyboardEvent, type MouseEvent } from "react";
 import type { Still } from "@/content/gallery";
-import { cn } from "@/lib/cn";
+import { Tooltip } from "@/components/ui/Tooltip";
 import styles from "./Lightbox.module.css";
 
 type Props = {
@@ -105,25 +105,29 @@ export function Lightbox({ stills, index, onIndexChange, onClose }: Props) {
           <span className={styles.count} aria-live="polite">
             {current && index !== null ? `${index + 1} of ${stills.length}` : ""}
           </span>
-          <button
-            ref={closeRef}
-            type="button"
-            className={styles.control}
-            onClick={closeWithFade}
-            aria-label="Close photo"
-          >
-            {icon("M6 6l12 12M18 6L6 18")}
-          </button>
+          <Tooltip label="Close photo" align="end">
+            <button
+              ref={closeRef}
+              type="button"
+              className={styles.control}
+              onClick={closeWithFade}
+              aria-label="Close photo"
+            >
+              {icon("M6 6l12 12M18 6L6 18")}
+            </button>
+          </Tooltip>
         </div>
         <div className={styles.stage} data-backdrop="">
-          <button
-            type="button"
-            className={cn(styles.control, styles.prev)}
-            onClick={() => step(-1)}
-            aria-label="Previous photo"
-          >
-            {icon("M15 5l-7 7 7 7")}
-          </button>
+          <Tooltip label="Show previous photo" side="top" align="start" className={styles.prev}>
+            <button
+              type="button"
+              className={styles.control}
+              onClick={() => step(-1)}
+              aria-label="Show previous photo"
+            >
+              {icon("M15 5l-7 7 7 7")}
+            </button>
+          </Tooltip>
           <figure className={styles.figure} data-backdrop="">
             {current && (
               <Image
@@ -142,14 +146,16 @@ export function Lightbox({ stills, index, onIndexChange, onClose }: Props) {
               {current?.alt}
             </figcaption>
           </figure>
-          <button
-            type="button"
-            className={cn(styles.control, styles.next)}
-            onClick={() => step(1)}
-            aria-label="Next photo"
-          >
-            {icon("M9 5l7 7-7 7")}
-          </button>
+          <Tooltip label="Show next photo" side="top" align="end" className={styles.next}>
+            <button
+              type="button"
+              className={styles.control}
+              onClick={() => step(1)}
+              aria-label="Show next photo"
+            >
+              {icon("M9 5l7 7-7 7")}
+            </button>
+          </Tooltip>
         </div>
       </div>
     </dialog>

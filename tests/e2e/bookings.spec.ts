@@ -133,7 +133,9 @@ test.describe("Book a Gursha seat", () => {
       page.getByText(`2 of 12 seats left at 6:30 pm on ${formatDate(date)}.`),
     ).toBeVisible();
     // The stepper stops at the seats that are left (2, which is also the default).
-    await expect(page.getByRole("group", { name: "Seats" }).locator("output")).toHaveText("2");
+    await expect(page.getByRole("group", { name: "Seats" }).locator("output")).toHaveText(
+      "2 seats",
+    );
     await expect(page.getByRole("button", { name: "Add one seat" })).toHaveAttribute(
       "aria-disabled",
       "true",

@@ -1,0 +1,92 @@
+/*
+  A small label for icon-only controls. Shown on keyboard focus and, on
+  devices with a real pointer, on hover after a short pause. WCAG 1.4.13:
+  Escape hides it, the pointer can move onto it, and it stays while hovered
+  or focused. Opacity only, so reduced motion needs nothing extra.
+*/
+.wrap {
+  position: relative;
+  display: inline-grid;
+}
+
+.tip {
+  position: absolute;
+  z-index: 70;
+  width: max-content;
+  max-width: 16rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-ctl);
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+  box-shadow: var(--inset-shadow-edge, none);
+  font-size: var(--text-meta);
+  line-height: 1.4;
+  font-weight: 500;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--motion-100) var(--ease-in),
+    visibility 0s linear var(--motion-100);
+}
+
+/* Placement: below by default, or above; centred, or lined up with one edge. */
+.wrap[data-side="bottom"] .tip {
+  top: calc(100% + 0.5rem);
+}
+.wrap[data-side="top"] .tip {
+  bottom: calc(100% + 0.5rem);
+}
+.wrap[data-align="center"] .tip {
+  left: 50%;
+  translate: -50% 0;
+}
+.wrap[data-align="start"] .tip {
+  left: 0;
+}
+.wrap[data-align="end"] .tip {
+  right: 0;
+}
+
+/* A bridge over the gap, so the pointer can move from the control onto the tip. */
+.tip::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 0.5rem;
+}
+.wrap[data-side="bottom"] .tip::before {
+  bottom: 100%;
+}
+.wrap[data-side="top"] .tip::before {
+  top: 100%;
+}
+
+.wrap:has(:focus-visible) .tip {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity var(--motion-150) var(--ease-out),
+    visibility 0s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wrap:hover .tip {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity var(--motion-150) var(--ease-out) 300ms,
+      visibility 0s linear 300ms;
+  }
+}
+
+/* Escape hides every tip until the pointer moves or focus changes. */
+:global(:root[data-tips-hidden]) .tip {
+  opacity: 0;
+  visibility: hidden;
+  transition: none;
+}
