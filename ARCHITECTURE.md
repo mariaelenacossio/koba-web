@@ -37,7 +37,7 @@ Tags
 | Language | TypeScript, strict mode | Catches errors in menu data and booking forms early |
 | Styling | Tailwind CSS v4 with tokens in `@theme` | Design tokens live in one place; matches the color, type, and spacing system |
 | Motion | CSS transitions, `@starting-style` and scroll-driven animations only; no animation library | Keeps the bundle light and motion on the compositor |
-| Fonts | `next/font/local` with the woff2 files bundled in `app/fonts` (OFL): Bodoni Moda, Jost, Noto Serif Ethiopic, Noto Sans Ethiopic. The Amharic fonts are subsets of the characters the site uses (`pnpm fonts:ethiopic`) | Self-hosted, no layout shift, builds never depend on Google. Subsets cut the Amharic fonts from 377KB to 39KB |
+| Fonts | `next/font/local` with the woff2 files bundled in `app/fonts` (OFL): Bodoni Moda, Jost, Noto Serif Ethiopic, Noto Sans Ethiopic. Built by `pnpm fonts`: every font keeps only the weights the CSS uses, and the Amharic fonts only the characters the site uses | Self-hosted, no layout shift, builds never depend on Google. All four fonts total 78KB (the Amharic ones were 377KB) |
 | Images | `next/image` with AVIF and WebP | Correct sizes, lazy loading, no layout shift |
 | Forms | Server Actions + Zod validation (shared schema client and server) | One source of truth for validation rules |
 | Database | Supabase (Postgres) | Stores reservations and Gursha seat bookings |
@@ -274,7 +274,7 @@ Production targets
 - LCP under 2.5s, CLS under 0.1, INP under 200ms.
 
 Tests
-- `pnpm test`: Vitest unit tests in `tests/unit` (booking dates and time zone, schemas, the rate-limit switch, and that the Amharic subset fonts cover every Amharic character on the site).
+- `pnpm test`: Vitest unit tests in `tests/unit` (booking dates and time zone, schemas, the rate-limit switch, and that the built fonts keep their weights and cover every Amharic character on the site).
 - `pnpm test:e2e`: Playwright against a production build (`pnpm build` first), in three projects: desktop at 1280px, mobile at 375px, and an iPhone WebKit run of the `@smoke` tests. Includes axe on every page in both themes. The KOBA wordmark is skipped by the contrast rule only, as a logotype (WCAG 1.4.3 exempts logos).
 - Booking tests write to the real Supabase project and send real emails, but only to Resend's test inbox: guests are `delivered+e2e-<run>@resend.dev` and restaurant notices go to `delivered@resend.dev`. Each project books its own dates near the end of the 60-day window, so real sittings are never touched.
 - Cleanup runs before and after every run (`tests/e2e/support/cleanup.ts`): it deletes every booking with a tagged test email, from this run or a crashed earlier one, and gives Gursha seats back with `release_gursha_seats()`. CI runs one Playwright job at a time so runs can't clean up each other's bookings.

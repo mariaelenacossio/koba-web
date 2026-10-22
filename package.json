@@ -20,7 +20,7 @@
     "media:film:upload": "node scripts/media/upload-film.mjs",
     "test:e2e": "playwright test",
     "test:lighthouse": "lhci autorun",
-    "fonts:ethiopic": "node scripts/fonts/subset-ethiopic.mjs"
+    "fonts": "node scripts/fonts/build.mjs"
   },
   "dependencies": {
     "@daypicker/react": "10.0.2",

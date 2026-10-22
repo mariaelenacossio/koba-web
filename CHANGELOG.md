@@ -12,12 +12,13 @@ All notable changes to the Koba site. Versions follow semantic versioning; produ
 - `RATE_LIMIT_DISABLED` for test runs; production ignores it.
 
 ### Changed (step 7)
-- Amharic fonts are subsets of the 64 characters the site uses: 377KB down to 39KB. Lighthouse's simulated first paint on mobile went from about 3.0s to 1.2s.
+- Fonts are built by `pnpm fonts`: the Amharic fonts hold only the 64 characters the site uses, and every font keeps only the weights the CSS asks for. All four total 78KB, down from 491KB. Glyphs are unchanged: weight 400 is identical, and other weights move by at most 0.09% of the em from re-encoding. Lighthouse's simulated first paint on mobile went from about 3.0s to 1.2s.
+- The hero loop starts once the poster has loaded and the browser is idle, so its 1.5MB download no longer competes with the poster. It looks the same and fades in a moment later.
 - Booking forms show placeholders shaped like the form while loading, so the footer no longer jumps (layout shift 0.4 to 0).
 - Phones get a portrait crop of the hero poster with an honest `srcset`. 3x phones now get a sharp poster, and the poster rather than the video is the LCP.
 - Calendar days are named "Tuesday 13 October 2026", and gallery thumbnails start their name with the visible caption, so voice control matches what's on screen (WCAG 2.5.3).
 - After a Gursha request is sent, the step leaves the URL.
-- Results on the deployed preview (mobile, median of 3): Performance 98 to 100, Accessibility and Best Practices 100, LCP 1.4 to 2.5s, CLS 0.
+- The autumn time zone test takes Vancouver's offset from `Intl`: newer time zone data keeps Vancouver on UTC-7 in November 2026, and the app already follows whatever the runtime says.
 
 ### Added (step 6: bookings)
 - `/reserve` (one form) and `/gursha/book` (three steps, each with its own URL) backed by server actions, Supabase and Resend. `/gursha` now carries the full story, what's included and how paying works.

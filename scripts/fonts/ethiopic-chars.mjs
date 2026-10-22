@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 /*
   Every Ethiopic character the site uses. The subset fonts are built from
-  this list (pnpm fonts:ethiopic), and a unit test checks it against the
+  this list (pnpm fonts), and a unit test checks it against the
   fonts so new Amharic copy can't fall back to a system font unnoticed.
 */
 
