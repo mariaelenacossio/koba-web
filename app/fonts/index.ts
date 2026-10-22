@@ -2,8 +2,9 @@ import localFont from "next/font/local";
 
 /*
   Fonts are bundled in the repo (SIL Open Font License, see OFL-*.txt here) so
-  builds never depend on fetching from Google. Variable woff2 files from
-  Google Fonts, one subset each:
+  builds never depend on fetching from Google. Built by `pnpm fonts` from the
+  variable Google Fonts files in scripts/fonts/source, each trimmed to the
+  weights below:
   - Bodoni Moda: latin, weight 400 to 600 plus the optical-size axis
   - Jost: latin, weight 400 to 500
   - Noto Serif and Sans Ethiopic: ethiopic, weight 400 to 500
@@ -28,10 +29,11 @@ export const jost = localFont({
   adjustFontFallback: "Arial",
 });
 
-// The Ethiopic files are about 190KB each, so they aren't preloaded: Amharic
-// lines swap in once the font arrives instead of competing with the hero.
+// Amharic fonts are subsets holding only the characters the site uses (about
+// 10KB each instead of 190KB; see scripts/fonts). They still aren't preloaded,
+// so they never compete with the hero; Amharic lines swap in when they land.
 export const notoSerifEthiopic = localFont({
-  src: "./NotoSerifEthiopic-ethiopic-wght.woff2",
+  src: "./NotoSerifEthiopic-subset-wght.woff2",
   weight: "400 500",
   style: "normal",
   variable: "--font-noto-serif-ethiopic",
@@ -41,7 +43,7 @@ export const notoSerifEthiopic = localFont({
 });
 
 export const notoSansEthiopic = localFont({
-  src: "./NotoSansEthiopic-ethiopic-wght.woff2",
+  src: "./NotoSansEthiopic-subset-wght.woff2",
   weight: "400 500",
   style: "normal",
   variable: "--font-noto-sans-ethiopic",

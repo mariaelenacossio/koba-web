@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
     // AVIF first, WebP as the fallback; the JPG sources are the last resort.
     formats: ["image/avif", "image/webp"],
     qualities: [75],
+    // Defaults plus 540, the width of the portrait hero poster, so its srcset
+    // can list its true size (components/hero/HeroVideo.tsx).
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 540],
     // Only our own media folder can be optimized, with no query strings.
     localPatterns: [{ pathname: "/media/**", search: "" }],
   },

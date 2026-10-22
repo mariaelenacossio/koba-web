@@ -24,6 +24,25 @@ type Props = {
   describedBy?: string;
 };
 
+/**
+ * "Tuesday 13 October 2026", plus "today" or "selected". The visible number
+ * stays a whole word in the name ("13", not "13th"), so voice control users
+ * can say what they see (WCAG 2.5.3 Label in Name).
+ */
+function labelDayButton(date: Date, modifiers: { today?: boolean; selected?: boolean }): string {
+  const label = new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })
+    .format(date)
+    .replace(",", "");
+  return [label, modifiers.today && "today", modifiers.selected && "selected"]
+    .filter(Boolean)
+    .join(", ");
+}
+
 /** YYYY-MM-DD to a local Date at midnight, so DayPicker shows that calendar day. */
 function toLocal(date: string): Date {
   const [y, m, d] = date.split("-").map(Number) as [number, number, number];
@@ -84,6 +103,7 @@ export function DatePicker({ value, onChange, labelledBy, describedBy }: Props) 
         showOutsideDays={false}
         weekStartsOn={0}
         components={{ Chevron }}
+        labels={{ labelDayButton }}
         classNames={{
           root: styles.dayPicker,
           months: styles.months,

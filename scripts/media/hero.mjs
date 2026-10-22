@@ -76,9 +76,25 @@ ffmpeg([
   resolve(out, "hero-poster.jpg"),
 ]);
 
+// Portrait screens show only the middle of the 16:9 frame. A 1:2 crop of the
+// same frame fills a phone without upscaling, so it stays the LCP image and
+// the video's first frame can't replace it as a "larger" paint.
+console.log("Writing hero-poster-portrait.jpg (centre crop, 540x1080) ...");
+ffmpeg([
+  "-i",
+  resolve(out, "hero-poster.jpg"),
+  "-vf",
+  "crop=ih/2:ih",
+  "-q:v",
+  "3",
+  resolve(out, "hero-poster-portrait.jpg"),
+]);
+
 for (const name of ["hero.mp4", "hero.webm"]) {
   const mb = sizeMB(resolve(out, name));
   console.log(`  ${name}: ${mb.toFixed(2)} MB`);
   if (mb > MAX_MB) fail(`${name} is ${mb.toFixed(2)} MB, over the ${MAX_MB} MB budget.`);
 }
-console.log(`  hero-poster.jpg: ${sizeMB(resolve(out, "hero-poster.jpg")).toFixed(2)} MB`);
+for (const name of ["hero-poster.jpg", "hero-poster-portrait.jpg"]) {
+  console.log(`  ${name}: ${sizeMB(resolve(out, name)).toFixed(2)} MB`);
+}
