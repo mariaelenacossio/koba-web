@@ -2,7 +2,9 @@
 
 All notable changes to the Koba site. Versions follow semantic versioning; production releases are tagged.
 
-## Unreleased
+## 1.0.0 (2026-10-25)
+
+First release of the Next.js site: the brand film's look, home sections in film order, gallery and film player, table and Gursha Table booking with email confirmations, and tests, accessibility and performance passes. Built in the eight steps of ARCHITECTURE.md section 11.
 
 ### Changed (step 8: UX audit and accessibility review)
 - Icon-only controls (theme toggle, calendar months, guest and seat steppers, lightbox, social links) show a tooltip on hover and on keyboard focus. Escape hides it, and the pointer can move onto it (WCAG 1.4.13).
