@@ -1,5 +1,6 @@
 "use client";
 
+import { Tooltip } from "@/components/ui/Tooltip";
 import { useSyncExternalStore } from "react";
 import { MoonIcon, SunIcon } from "@/components/icons";
 import { THEME_STORAGE_KEY, type Theme } from "@/lib/theme";
@@ -29,14 +30,12 @@ export function ThemeToggle() {
     }
   }
 
+  const label = next === "light" ? "Switch to light theme" : "Switch to dark theme";
   return (
-    <button
-      type="button"
-      className="icon-btn"
-      onClick={toggle}
-      aria-label={next === "light" ? "Switch to light theme" : "Switch to dark theme"}
-    >
-      {theme === "light" ? <MoonIcon /> : <SunIcon />}
-    </button>
+    <Tooltip label={label} align="end">
+      <button type="button" className="icon-btn" onClick={toggle} aria-label={label}>
+        {theme === "light" ? <MoonIcon /> : <SunIcon />}
+      </button>
+    </Tooltip>
   );
 }

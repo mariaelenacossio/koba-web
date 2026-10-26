@@ -1,6 +1,8 @@
 "use client";
 
 import { DayPicker, type ChevronProps } from "@daypicker/react";
+import type { ButtonHTMLAttributes } from "react";
+import { Tooltip } from "@/components/ui/Tooltip";
 import { dateProblem, formatDate, lastBookableDate, todayInRestaurant } from "@/lib/booking-dates";
 import { booking } from "@/content/site";
 import styles from "./DatePicker.module.css";
@@ -55,6 +57,23 @@ function toIso(d: Date): string {
   return `${d.getFullYear()}-${mm}-${dd}`;
 }
 
+/** Month buttons with sentence-case names and a visible tooltip. */
+function PreviousMonthButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <Tooltip label="Show previous month" align="start">
+      <button {...props} aria-label="Show previous month" />
+    </Tooltip>
+  );
+}
+
+function NextMonthButton(props: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <Tooltip label="Show next month" align="end">
+      <button {...props} aria-label="Show next month" />
+    </Tooltip>
+  );
+}
+
 function Chevron({ orientation }: ChevronProps) {
   const d = orientation === "left" ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7";
   return (
@@ -102,8 +121,8 @@ export function DatePicker({ value, onChange, labelledBy, describedBy }: Props) 
         ]}
         showOutsideDays={false}
         weekStartsOn={0}
-        components={{ Chevron }}
-        labels={{ labelDayButton }}
+        components={{ Chevron, PreviousMonthButton, NextMonthButton }}
+        labels={{ labelDayButton, labelNav: () => "Change month" }}
         classNames={{
           root: styles.dayPicker,
           months: styles.months,

@@ -29,6 +29,10 @@
   --color-brass: #a9743a;
   --color-line: rgb(243 235 221 / 0.12);
   --color-line-strong: rgb(243 235 221 / 0.24);
+  /* Edges of form controls (inputs, steppers, selectors, search): at least
+     3:1 against canvas, surface and velvet, so the control can be seen
+     (WCAG 1.4.11). */
+  --color-line-control: rgb(243 235 221 / 0.48);
   --color-error: #e08a72;
   --color-on-gold: #0e241b;
   --color-transparent: transparent;
@@ -118,6 +122,7 @@
   --color-brass: #8a5a26;
   --color-line: rgb(18 41 31 / 0.12);
   --color-line-strong: rgb(18 41 31 / 0.24);
+  --color-line-control: rgb(18 41 31 / 0.56);
   --color-error: #a3432b;
   --color-on-gold: #f6f0e4;
   --shadow-l2: 0 16px 40px rgb(18 41 31 / 0.07);

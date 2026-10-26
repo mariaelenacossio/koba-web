@@ -7,12 +7,13 @@ import { formatDate } from "@/lib/booking-dates";
 import { reservationSchema } from "@/lib/schemas";
 import { BookingSuccess } from "./BookingSuccess";
 import { DatePicker } from "./DatePicker";
-import { Field, FieldError, inputClass } from "./Field";
+import { Field, FieldError, inputClass, RequiredNote } from "./Field";
 import { PrivacyNote } from "./PrivacyNote";
 import { Stepper } from "./Stepper";
 import { SubmitButton } from "./SubmitButton";
 import { TimeSlots } from "./TimeSlots";
 import { Turnstile, type TurnstileHandle } from "./Turnstile";
+import { clearDraft, isDirty, readDraft, useSaveDraft, useWarnOnLeave } from "./draft";
 import { useBookingForm } from "./useBookingForm";
 
 const fields = ["date", "time", "guests", "name", "email", "phone", "notes"] as const;
@@ -28,26 +29,37 @@ type Values = {
   website: string;
 };
 
+const DRAFT_KEY = "koba-reserve-draft";
+
+const blank: Values = {
+  date: "",
+  time: booking.reservation.times[1],
+  guests: 2,
+  name: "",
+  email: "",
+  phone: "",
+  notes: "",
+  website: "",
+};
+
 export function ReserveForm() {
   const uid = useId();
+  // The form renders in the browser only (it needs today's date in
+  // Vancouver), so it can read this tab's draft for its first state.
+  const [initial] = useState(() => readDraft(DRAFT_KEY, blank));
   const { values, set, blur, errors, validate, showServerErrors } = useBookingForm<Values>(
     reservationSchema,
-    {
-      date: "",
-      time: booking.reservation.times[1],
-      guests: 2,
-      name: "",
-      email: "",
-      phone: "",
-      notes: "",
-      website: "",
-    },
+    initial,
   );
   const [pending, setPending] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [done, setDone] = useState<{ reference: string; emailSent: boolean } | null>(null);
   const [token, setToken] = useState("");
   const turnstile = useRef<TurnstileHandle>(null);
+
+  // Keep answers for this tab, and ask before the tab closes with them unsent.
+  useSaveDraft(DRAFT_KEY, values, done !== null);
+  useWarnOnLeave(done === null && isDirty(values, blank));
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,6 +71,7 @@ export function ReserveForm() {
       const result = await requestReservation(values, token);
       if (result.ok) {
         setDone({ reference: result.reference, emailSent: result.emailSent });
+        clearDraft(DRAFT_KEY);
         return;
       }
       if (result.fieldErrors) showServerErrors(result.fieldErrors);
@@ -98,6 +111,7 @@ export function ReserveForm() {
       className="grid gap-8"
       aria-describedby={formError ? `${uid}-form-error` : undefined}
     >
+      <RequiredNote />
       <div className="grid gap-8 lg:grid-cols-[auto_1fr] lg:gap-12">
         <div className="grid content-start gap-6">
           <div className="grid gap-2" data-field="date">

@@ -9,12 +9,13 @@ import { formatDate } from "@/lib/booking-dates";
 import { gurshaSchema } from "@/lib/schemas";
 import { BookingSuccess } from "./BookingSuccess";
 import { DatePicker } from "./DatePicker";
-import { Field, FieldError, inputClass } from "./Field";
+import { Field, FieldError, inputClass, RequiredNote } from "./Field";
 import { PrivacyNote } from "./PrivacyNote";
 import { Stepper } from "./Stepper";
 import { SubmitButton } from "./SubmitButton";
 import { TimeSlots } from "./TimeSlots";
 import { Turnstile, type TurnstileHandle } from "./Turnstile";
+import { clearDraft, isDirty, readDraft, useSaveDraft, useWarnOnLeave } from "./draft";
 import { useBookingForm } from "./useBookingForm";
 
 const STEPS = [
@@ -49,17 +50,6 @@ const blank: Values = {
   website: "",
 };
 
-/** This tab's saved answers, if any. Only runs in the browser (see below). */
-function readDraft(): Values {
-  try {
-    const raw = sessionStorage.getItem(DRAFT_KEY);
-    if (raw) return { ...blank, ...(JSON.parse(raw) as Partial<Values>), website: "" };
-  } catch {
-    // Storage blocked or unreadable: start fresh.
-  }
-  return blank;
-}
-
 /**
  * Three steps, each with its own URL (?step=1|2|3) so Back works and a refresh
  * keeps the guest's place. Answers are kept in sessionStorage for this tab
@@ -75,7 +65,7 @@ export function GurshaBooking() {
 
   // useSearchParams keeps this component out of the prerender, so it only
   // renders in the browser and can read sessionStorage for its first state.
-  const [initial] = useState(readDraft);
+  const [initial] = useState(() => readDraft(DRAFT_KEY, blank));
   const { values, set, blur, errors, validate, showServerErrors } = useBookingForm<Values>(
     gurshaSchema,
     initial,
@@ -88,15 +78,9 @@ export function GurshaBooking() {
   const turnstile = useRef<TurnstileHandle>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
-  // Save answers for this tab, so a refresh or Back keeps the guest's place.
-  useEffect(() => {
-    if (done) return;
-    try {
-      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ ...values, website: undefined }));
-    } catch {
-      // Storage blocked: the form still works, a refresh just starts over.
-    }
-  }, [values, done]);
+  // Keep answers for this tab, and ask before the tab closes with them unsent.
+  useSaveDraft(DRAFT_KEY, values, done !== null);
+  useWarnOnLeave(done === null && isDirty(values, blank));
 
   // A later step opened without the earlier answers goes back to step 1.
   useEffect(() => {
@@ -115,8 +99,12 @@ export function GurshaBooking() {
     };
   }, [values.date]);
 
-  // Move focus to the step heading when the step changes.
+  // Move focus to the step heading when the step changes, but not when the
+  // page first loads: then the skip link and page heading come first.
+  const firstStep = useRef(step);
   useEffect(() => {
+    if (step === firstStep.current) return;
+    firstStep.current = -1;
     headingRef.current?.focus();
   }, [step]);
 
@@ -141,9 +129,7 @@ export function GurshaBooking() {
       const result = await requestGurshaSeats(values, token);
       if (result.ok) {
         setDone({ reference: result.reference, emailSent: result.emailSent });
-        try {
-          sessionStorage.removeItem(DRAFT_KEY);
-        } catch {}
+        clearDraft(DRAFT_KEY);
         // The request is sent, so the step no longer belongs in the URL.
         router.replace(pathname, { scroll: false });
         return;
@@ -261,6 +247,7 @@ export function GurshaBooking() {
 
       {step === 2 && (
         <form onSubmit={onNext} noValidate className="grid gap-6">
+          <RequiredNote />
           <div className="grid gap-2" data-field="setType">
             <span id={`${uid}-set-label`} className="text-secondary font-medium">
               Set for your booking

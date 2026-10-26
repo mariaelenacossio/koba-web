@@ -103,6 +103,10 @@ export default function GurshaPage() {
               available: choose when you book. Booking for friends? Add their seats, up to{" "}
               {booking.gursha.maxSeatsPerBooking}, or ask each friend to book their own.
             </p>
+            {/* The same action as the top of the page, for guests who read to the end. */}
+            <Link href="/gursha/book" className="btn btn-primary justify-self-start">
+              Book a Gursha seat
+            </Link>
           </section>
         </div>
       </div>
